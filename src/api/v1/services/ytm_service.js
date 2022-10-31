@@ -1,0 +1,55 @@
+const { queryParams } = require("../helpers");
+const {
+  API_BASE_URL,
+  WEB_REMIX_KEY,
+  Endpoint_names,
+  ANDROID_KEY,
+  API_ORIGIN,
+} = require("../../../config/ytm_config");
+
+const methods = {
+  searchSongs: function (text, ctoken, itct) {
+    // prepare data to create a request
+    const context = {
+        client: {
+          clientName: "WEB_REMIX",
+          clientVersion: "1.20220404.01.00",
+        },
+      },
+      params = {
+        browseId: "",
+        query: decodeURIComponent(text),
+        params: "songs",
+      },
+      continuation =
+        ctoken && ctoken !== ""
+          ? { continuation: ctoken, ctoken, itct: `${itct}`, type: "next" }
+          : undefined;
+    const body = { context, ...params };
+
+    // create a request
+    const request = fetch(
+      API_BASE_URL +
+        Endpoint_names.Search +
+        "?" +
+        (continuation
+          ? queryParams(continuation) + `&sp=EgWKAQIIAWoKEAMQBBAKEAkQBQ%3D%3D&`
+          : "") +
+        `key=${WEB_REMIX_KEY}`,
+      {
+        body: JSON.stringify(body),
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Origin: "https://music.youtube.com",
+          "User-Agent":
+            "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+        },
+      }
+    );
+
+    return request;
+  },
+};
+
+module.exports = methods;
