@@ -1,3 +1,5 @@
+const ytm_helper = require("./ytm_parser.helper");
+
 const methods = {
   queryParams: function (params) {
     const result = [];
@@ -11,4 +13,4 @@ const methods = {
   },
 };
 
-module.exports = methods;
+module.exports = { ...methods, ...ytm_helper };

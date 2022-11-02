@@ -8,7 +8,7 @@ const {
 } = require("../../../config/ytm_config");
 
 const methods = {
-  searchSongs: function (text, ctoken, itct) {
+  searchSongsRequest: function (text, ctoken, itct) {
     // prepare data to create a request
     const context = {
         client: {
@@ -19,7 +19,7 @@ const methods = {
       params = {
         browseId: "",
         query: decodeURIComponent(text),
-        params: "songs",
+        params: "EgWKAQIIAWoKEAMQBBAJEAoQBQ%3D%3D", // songs's raw filter for youtube music
       },
       continuation =
         ctoken && ctoken !== ""
