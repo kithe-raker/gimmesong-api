@@ -14,6 +14,17 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  getYTSongDetails: async function (req, res, next) {
+    try {
+      const id = req.query?.id ?? "";
+
+      const results = await ytm_func.getSongDetails(id);
+
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
 };
 
 module.exports = methods;

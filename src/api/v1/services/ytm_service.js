@@ -50,6 +50,30 @@ const methods = {
 
     return request;
   },
+  songDetailsRequest: function (id, includeArtist = true) {
+    const context = {
+        client: { clientName: "IOS", clientVersion: "17.13.3", hl: "en" },
+      },
+      params = {
+        videoId: id,
+        racyCheckOk: true,
+        contentCheckOk: true,
+      };
+    const body = { context, ...params };
+
+    const request = fetch(
+      API_BASE_URL + Endpoint_names.Player + `?key=${ANDROID_KEY}`,
+      {
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Origin: API_ORIGIN,
+        },
+        body: JSON.stringify(body),
+        method: "POST",
+      }
+    );
+    return request;
+  },
 };
 
 module.exports = methods;

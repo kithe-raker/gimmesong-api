@@ -62,6 +62,24 @@ const methods = {
     Object.assign(Item, {});
     return Item;
   },
+  SongDetailsParser: function (data) {
+    const formats = data?.streamingData?.adaptiveFormats;
+    let idx = -1;
+    const length = formats?.length;
+
+    const arr = [];
+    while (++idx < length) {
+      const item = formats[idx];
+      if (item.itag < 139 && item.itag > 251) continue;
+      if (item.itag === 140)
+        arr.push({
+          original_url: item.url,
+          url: item.url,
+          mimeType: "mp4",
+        });
+    }
+    return { streams: arr };
+  },
 };
 
 // ==================== Private function ====================

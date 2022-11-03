@@ -1,4 +1,4 @@
-const { SearchContentParser } = require("../helpers");
+const { SearchContentParser, SongDetailsParser } = require("../helpers");
 const ytm = require("../services/ytm_service");
 
 const methods = {
@@ -29,6 +29,36 @@ const methods = {
           : _parseContents(contents, "songs");
 
       return results;
+    } catch (error) {
+      throw error(500, err);
+    }
+  },
+  /**
+   * Right now only returning streaming data
+   * @param {string} id
+   * @returns
+   */
+  getSongDetails: async function (id) {
+    try {
+      const response = await ytm.songDetailsRequest(id);
+
+      if (!response.ok) {
+        // Suggestion (check for correctness before using):
+        // return new Response(response.statusText, { status: response.status });
+        return error(response.status, response.statusText);
+      }
+      const data = await response.json();
+
+      if (
+        data &&
+        !data?.streamingData &&
+        data?.playabilityStatus.status === "UNPLAYABLE"
+      ) {
+        throw "Error Unplayable";
+      }
+
+      const result = SongDetailsParser(data);
+      return result;
     } catch (error) {
       throw error(500, err);
     }
