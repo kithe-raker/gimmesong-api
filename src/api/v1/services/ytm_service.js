@@ -58,6 +58,8 @@ const methods = {
         videoId: id,
         racyCheckOk: true,
         contentCheckOk: true,
+        playlistId: "",
+        params: "",
       };
     const body = { context, ...params };
 
