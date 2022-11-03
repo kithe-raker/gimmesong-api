@@ -9,7 +9,7 @@ const methods = {
     const doc = await pathRef.UserDocument(uid).get();
     return doc.data();
   },
-  queryReceivedSong: async function (uid) {
+  queryReceivedSongs: async function (uid) {
     const snapshot = await pathRef
       .UserInboxCollection(uid)
       .orderBy("receivedAt", "desc")
