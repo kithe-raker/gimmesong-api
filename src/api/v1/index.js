@@ -3,9 +3,17 @@ const router = express.Router();
 
 const ytm = require("./controllers/ytm.controller");
 
+// youtube music 
 router.get("/searchsongs", ytm.searchYTSong);
 router.get("/getsongstreams", ytm.getYTSongDetails);
 
-// test commit
+// about user
+
+// get username
+// query my songs
+
+// new user
+// send song
+
 
 module.exports = router;
