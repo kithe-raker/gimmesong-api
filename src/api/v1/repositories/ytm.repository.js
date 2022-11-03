@@ -3,35 +3,31 @@ const ytm = require("../services/ytm_service");
 
 const methods = {
   searchSongs: async function (text, ctoken, itct) {
-    try {
-      const response = await ytm.searchSongsRequest(text, ctoken, itct);
+    const response = await ytm.searchSongsRequest(text, ctoken, itct);
 
-      if (!response.ok) {
-        throw error(500, response.statusText);
-      }
-
-      const data = await response.json();
-
-      // parse content
-      const hasTabs = Array.isArray(
-        data?.contents?.tabbedSearchResultsRenderer?.tabs
-      );
-      const contents =
-        hasTabs &&
-        data.contents.tabbedSearchResultsRenderer.tabs[0].tabRenderer?.content
-          ?.sectionListRenderer?.contents;
-      const continuationContents =
-        data?.continuationContents?.musicShelfContinuation;
-
-      const results =
-        ctoken !== ""
-          ? _parseContinuation(continuationContents, "songs")
-          : _parseContents(contents, "songs");
-
-      return results;
-    } catch (error) {
-      throw error(500, err);
+    if (!response.ok) {
+      throw response.statusText;
     }
+
+    const data = await response.json();
+
+    // parse content
+    const hasTabs = Array.isArray(
+      data?.contents?.tabbedSearchResultsRenderer?.tabs
+    );
+    const contents =
+      hasTabs &&
+      data.contents.tabbedSearchResultsRenderer.tabs[0].tabRenderer?.content
+        ?.sectionListRenderer?.contents;
+    const continuationContents =
+      data?.continuationContents?.musicShelfContinuation;
+
+    const results =
+      ctoken !== ""
+        ? _parseContinuation(continuationContents, "songs")
+        : _parseContents(contents, "songs");
+
+    return results;
   },
   /**
    * Right now only returning streaming data
@@ -39,29 +35,25 @@ const methods = {
    * @returns
    */
   getSongDetails: async function (id) {
-    try {
-      const response = await ytm.songDetailsRequest(id);
+    const response = await ytm.songDetailsRequest(id);
 
-      if (!response.ok) {
-        // Suggestion (check for correctness before using):
-        // return new Response(response.statusText, { status: response.status });
-        return error(response.status, response.statusText);
-      }
-      const data = await response.json();
-
-      if (
-        data &&
-        !data?.streamingData &&
-        data?.playabilityStatus.status === "UNPLAYABLE"
-      ) {
-        throw "Error Unplayable";
-      }
-
-      const result = SongDetailsParser(data);
-      return result;
-    } catch (error) {
-      throw error(500, err);
+    if (!response.ok) {
+      // Suggestion (check for correctness before using):
+      // return new Response(response.statusText, { status: response.status });
+      return error(response.status, response.statusText);
     }
+    const data = await response.json();
+
+    if (
+      data &&
+      !data?.streamingData &&
+      data?.playabilityStatus.status === "UNPLAYABLE"
+    ) {
+      throw "Error Unplayable";
+    }
+
+    const result = SongDetailsParser(data);
+    return result;
   },
 };
 
