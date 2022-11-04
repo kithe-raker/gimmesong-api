@@ -1,5 +1,6 @@
 const { pathRef, fs, FieldValue } = require("../../../config/firebase_config");
 const { SongSchema } = require("../schemas/ytm.schema");
+const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
   getUserIdByName: async function (username) {
@@ -97,7 +98,7 @@ const methods = {
       merge: true,
     });
 
-    await batch.commit();
+    Promise.all([await incrementSongSentStats(), await batch.commit()]);
   },
 
   /**

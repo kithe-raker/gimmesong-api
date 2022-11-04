@@ -10,15 +10,6 @@ const methods = {
       res.status(500).json(error);
     }
   },
-  incrementTotalSongSent: async function (req, res, next) {
-    try {
-      await StatsFunction.incrementSongSentStats();
-
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json(error);
-    }
-  },
 };
 
 module.exports = methods;

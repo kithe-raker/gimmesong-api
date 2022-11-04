@@ -8,6 +8,8 @@ if (process.env.NODE_ENV === "production") {
 
   firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
+    databaseURL:
+      "https://gimmesong-d4f27-default-rtdb.asia-southeast1.firebasedatabase.app",
   });
 }
 

@@ -20,6 +20,5 @@ router.post("/playsongfrominbox", user.authenticateJWT, user.playSongFromInbox);
 
 // stats
 router.get("/totalsongsent", stats.getTotalSongSent);
-router.post("/incrementtotalsongsent", stats.incrementTotalSongSent);
 
 module.exports = router;
