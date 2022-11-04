@@ -1,4 +1,5 @@
 const UserFunction = require("../repositories/user.repository");
+const { fa } = require("../../../config/firebase_config");
 
 const methods = {
   getUsername: async function (req, res, next) {
@@ -33,15 +34,15 @@ const methods = {
   // },
   queryUserInbox: async function (req, res, next) {
     try {
-      const authHeader = req.headers.authorization;
-      const idToken = _getUserIdToken(authHeader);
-      if (!idToken) {
+      
+      const uid = _getUserId(req);
+      if (!uid) {
         res.status(401).json({ details: "required authorization" });
         return;
       }
 
       const filter = req.query?.filter ?? "all";
-      const results = await UserFunction.queryReceivedSongs(idToken, filter);
+      const results = await UserFunction.queryReceivedSongs(uid, filter);
 
       res.json({ success: true, results });
     } catch (error) {
@@ -51,15 +52,15 @@ const methods = {
 
   addNewUser: async function (req, res, next) {
     try {
-      const authHeader = req.headers.authorization;
-      const idToken = _getUserIdToken(authHeader);
-      if (!idToken) {
+      
+      const uid = _getUserId(req);
+      if (!uid) {
         res.status(401).json({ details: "required authorization" });
         return;
       }
 
       const { username } = req.body;
-      await UserFunction.addNewUser(idToken, username);
+      await UserFunction.addNewUser(uid, username);
 
       res.json({ success: true });
     } catch (error) {
@@ -97,7 +98,7 @@ const methods = {
   playSongFromInbox: async function (req, res, next) {
     try {
       const authHeader = req.headers.authorization;
-      const idToken = _getUserIdToken(authHeader);
+      const idToken = _getUserId(authHeader);
       if (!idToken) {
         res.status(401).json({ details: "required authorization" });
         return;
@@ -111,17 +112,30 @@ const methods = {
       res.status(500).json(error);
     }
   },
+
+  authenticateJWT: async function (req, res, next) {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader) {
+      const idToken = authHeader.split(" ")[1];
+      fa.verifyIdToken(idToken)
+        .then(function (decodedToken) {
+          req.user = decodedToken;
+          return next();
+        })
+        .catch(function (error) {
+          return res.sendStatus(403);
+        });
+    } else {
+      res.sendStatus(401);
+    }
+  },
 };
 
 // ==================== Private function ====================
 
-function _getUserIdToken(authHeader) {
-  if (!authHeader) {
-    return;
-  }
-
-  const idToken = authHeader.split(" ")[1];
-  return idToken;
+function _getUserId(req) {
+  return req?.user?.uid;
 }
 
 module.exports = methods;
