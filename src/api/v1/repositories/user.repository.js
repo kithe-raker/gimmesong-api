@@ -9,13 +9,40 @@ const methods = {
     const doc = await pathRef.UserDocument(uid).get();
     return { username: doc.data()?.username, exists: doc.exists };
   },
-  queryReceivedSongs: async function (uid) {
-    const snapshot = await pathRef
+  queryReceivedSongs: async function (uid, onlyNewSong = false) {
+    const query = pathRef
       .UserInboxCollection(uid)
-      .orderBy("receivedAt", "desc")
-      .get();
+      .orderBy("receivedAt", "desc");
 
-    return snapshot.docs.map((doc) => doc.data());
+    const snapshot = onlyNewSong
+      ? await query.where("played", "==", false).get()
+      : await query.get();
+
+    const promises = [];
+    const results = [];
+
+    snapshot.docs.forEach((doc) => {
+      const receivedData = doc.data();
+      const songId = receivedData?.content?.songId;
+      if (!songId) return;
+
+      promises.push(
+        this.getCachedSongDetails(songId).then((data) => {
+          if (data.exists) {
+            receivedData.content.song = data.song;
+            results.push(receivedData);
+          }
+        })
+      );
+    });
+
+    await Promise.all(promises);
+
+    return results;
+  },
+  getCachedSongDetails: async function (songId) {
+    const doc = await pathRef.SongDocument(songId).get();
+    return { song: doc.data(), exists: doc.exists };
   },
 
   /**

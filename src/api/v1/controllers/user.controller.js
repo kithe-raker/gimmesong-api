@@ -33,8 +33,9 @@ const methods = {
   // },
   queryUserInbox: async function (req, res, next) {
     try {
-      const uid = req.query?.uid;
-      const results = await UserFunction.queryReceivedSongs(uid);
+      const { uid, onlyNewSong } = req.body;
+
+      const results = await UserFunction.queryReceivedSongs(uid, onlyNewSong);
 
       res.json({ success: true, results });
     } catch (error) {
