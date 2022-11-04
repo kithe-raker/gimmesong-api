@@ -15,5 +15,6 @@ router.get("/queryinbox", user.queryUserInbox);
 
 router.post("/addnewuser", user.addNewUser);
 router.post("/sendsong", user.sendSong);
+router.post("/playsongfrominbox", user.playSongFromInbox);
 
 module.exports = router;

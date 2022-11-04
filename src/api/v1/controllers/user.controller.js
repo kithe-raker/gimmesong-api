@@ -94,6 +94,23 @@ const methods = {
       }
     }
   },
+  playSongFromInbox: async function (req, res, next) {
+    try {
+      const authHeader = req.headers.authorization;
+      const idToken = _getUserIdToken(authHeader);
+      if (!idToken) {
+        res.status(401).json({ details: "required authorization" });
+        return;
+      }
+
+      const { inboxId } = req.body;
+      await UserFunction.playSongFromInbox(idToken, inboxId);
+
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
 };
 
 // ==================== Private function ====================

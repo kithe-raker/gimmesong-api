@@ -100,6 +100,7 @@ const methods = {
 
     await batch.commit();
   },
+
   /**
    * @param {string} idToken user's session token
    * @param {string} username
@@ -123,6 +124,23 @@ const methods = {
         username: username,
       });
     });
+  },
+  /**
+   * @param {string} idToken user's session token
+   * @param {string} inboxId target song in inbox to play
+   */
+  playSongFromInbox: async function (idToken, inboxId) {
+    if (!inboxId) throw "No inbox's id provided";
+
+    const user = await fa.verifyIdToken(idToken).catch((_) => {
+      throw "invalid session token";
+    });
+    const uid = user.uid;
+
+    await pathRef
+      .UserInboxCollection(uid)
+      .doc(inboxId)
+      .update({ played: true });
   },
 };
 
