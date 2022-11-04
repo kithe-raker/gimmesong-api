@@ -3,7 +3,7 @@ const { pathRef, fs, firebase } = require("../../../config/firebase_config");
 const methods = {
   getUserIdByName: async function (username) {
     const doc = await pathRef.UsernameDocument(username).get();
-    return doc.data();
+    return { uid: doc.data()?.uid, exists: doc.exists };
   },
   getUsername: async function (uid) {
     const doc = await pathRef.UserDocument(uid).get();

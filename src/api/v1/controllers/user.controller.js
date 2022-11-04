@@ -11,6 +11,16 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  getUserId: async function (req, res, next) {
+    try {
+      const username = req.query?.username;
+      const results = await UserFunction.getUserIdByName(username);
+
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   queryUserInbox: async function (req, res, next) {
     try {
       const uid = req.query?.uid;

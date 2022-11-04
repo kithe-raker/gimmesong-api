@@ -10,6 +10,7 @@ router.get("/getsongstreams", ytm.getYTSongDetails);
 
 // about user
 router.get("/getusername", user.getUsername);
+router.get("/getuserid", user.getUserId);
 router.get("/queryinbox", user.queryUserInbox);
 
 router.post("/addnewuser", user.addNewUser);
