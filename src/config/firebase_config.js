@@ -1,18 +1,19 @@
 const firebase = require("firebase-admin");
 
+const db_url =
+  "https://gimmesong-d4f27-default-rtdb.asia-southeast1.firebasedatabase.app";
+
 // Initialize Firebase for `Production` or `Development` environment
 if (process.env.NODE_ENV === "production") {
   firebase.initializeApp({
-    databaseURL:
-      "https://gimmesong-d4f27-default-rtdb.asia-southeast1.firebasedatabase.app",
+    databaseURL: db_url,
   });
 } else {
   const serviceAccount = require("../../secret/gimmesong-firebase-adminsdk.json");
 
   firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
-    databaseURL:
-      "https://gimmesong-d4f27-default-rtdb.asia-southeast1.firebasedatabase.app",
+    databaseURL: db_url,
   });
 }
 
