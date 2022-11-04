@@ -7,7 +7,7 @@ const methods = {
   },
   getUsername: async function (uid) {
     const doc = await pathRef.UserDocument(uid).get();
-    return doc.data();
+    return { username: doc.data()?.username, exists: doc.exists };
   },
   queryReceivedSongs: async function (uid) {
     const snapshot = await pathRef
