@@ -18,21 +18,11 @@ const methods = {
     const subtitles = Array.isArray(subtitleRuns) && _subtitle(subtitleRuns);
 
     const Item = {
-      subtitle: subtitles,
+      title: flexCol0.text,
       artistInfo: {
         artist: [subtitles[0]],
       },
-      explicit: "badges" in item ? true : false,
-      title: flexCol0.text,
-      aspectRatio: item.flexColumnDisplayStyle,
-      musicVideoType:
-        flexCol0.navigationEndpoint?.watchEndpoint?.watchEndpointMusicConfig
-          ?.musicVideoType ??
-        flexCol0.navigationEndpoint?.watchEndpoint
-          ?.watchEndpointMusicSupportedConfigs?.watchEndpointMusicConfig
-          ?.musicVideoType,
       videoId: flexCol0.navigationEndpoint?.watchEndpoint?.videoId || "",
-
       thumbnails: thumbnails,
       length:
         "fixedColumns" in item &&

@@ -112,51 +112,53 @@ function _parseContents(contents, filter) {
   return { results, continuation };
 }
 
-/**
- *
- * @param {Array} array
- * @param {*} cb
- */
-function _iter(array, cb) {
-  const len = array.length;
-  let idx = -1;
-  while (++idx < len) {
-    cb(array[idx], idx, array);
-  }
-  idx = null;
-}
-
 function _parseResults(items, type) {
   const results = [];
   let idx = items.length;
   while (--idx > -1) {
     const entry = items[idx];
     const item = SearchContentParser(entry);
-    Object.assign(item, { type: type });
-    if (type === "playlists" || type === "albums") {
-      let metaData = "";
-      _iter(item.subtitle, (subtitle) => (metaData += subtitle.text));
-      Object.assign(item, {
-        metaData: metaData,
-        browseId:
-          entry.musicResponsiveListItemRenderer?.navigationEndpoint
-            ?.browseEndpoint?.browseId,
-        playlistId:
-          entry.musicResponsiveListItemRenderer.menu?.menuRenderer?.items[0]
-            ?.menuNavigationItemRenderer?.navigationEndpoint
-            ?.watchPlaylistEndpoint?.playlistId,
-      });
-    }
-    if (type === "songs") {
-      Object.assign(item, {
-        album:
-          item.subtitle.at(-3).pageType?.includes("ALBUM") &&
-          item.subtitle.at(-3),
-      });
-    }
+
+    // Deprecated unused field
+    //
+    // Object.assign(item, { type: type });
+    // if (type === "playlists" || type === "albums") {
+    //   let metaData = "";
+    //   _iter(item.subtitle, (subtitle) => (metaData += subtitle.text));
+    //   Object.assign(item, {
+    //     metaData: metaData,
+    //     browseId:
+    //       entry.musicResponsiveListItemRenderer?.navigationEndpoint
+    //         ?.browseEndpoint?.browseId,
+    //     playlistId:
+    //       entry.musicResponsiveListItemRenderer.menu?.menuRenderer?.items[0]
+    //         ?.menuNavigationItemRenderer?.navigationEndpoint
+    //         ?.watchPlaylistEndpoint?.playlistId,
+    //   });
+    // }
+    // if (type === "songs") {
+    //   Object.assign(item, {
+    //     album:
+    //       item.subtitle.at(-3).pageType?.includes("ALBUM") &&
+    //       item.subtitle.at(-3),
+    //   });
+    // }
     results.unshift(item);
   }
   return results;
 }
+/**
+ *
+ * @param {Array} array
+ * @param {*} cb
+ */
+// function _iter(array, cb) {
+//   const len = array.length;
+//   let idx = -1;
+//   while (++idx < len) {
+//     cb(array[idx], idx, array);
+//   }
+//   idx = null;
+// }
 
 module.exports = methods;
