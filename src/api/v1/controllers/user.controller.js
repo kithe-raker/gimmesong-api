@@ -34,7 +34,6 @@ const methods = {
   // },
   queryUserInbox: async function (req, res, next) {
     try {
-      
       const uid = _getUserId(req);
       if (!uid) {
         res.status(401).json({ details: "required authorization" });
@@ -52,7 +51,6 @@ const methods = {
 
   addNewUser: async function (req, res, next) {
     try {
-      
       const uid = _getUserId(req);
       if (!uid) {
         res.status(401).json({ details: "required authorization" });
@@ -97,15 +95,14 @@ const methods = {
   },
   playSongFromInbox: async function (req, res, next) {
     try {
-      const authHeader = req.headers.authorization;
-      const idToken = _getUserId(authHeader);
-      if (!idToken) {
+      const uid = _getUserId(req);
+      if (!uid) {
         res.status(401).json({ details: "required authorization" });
         return;
       }
 
       const { inboxId } = req.body;
-      await UserFunction.playSongFromInbox(idToken, inboxId);
+      await UserFunction.playSongFromInbox(uid, inboxId);
 
       res.json({ success: true });
     } catch (error) {

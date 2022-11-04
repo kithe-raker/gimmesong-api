@@ -11,10 +11,10 @@ router.get("/getsongstreams", ytm.getYTSongDetails);
 // about user
 router.get("/getusername", user.getUsername);
 router.get("/usernameexist", user.isUsernameExists);
-router.get("/queryinbox", user.queryUserInbox);
+router.get("/queryinbox", user.authenticateJWT, user.queryUserInbox);
 
-router.post("/addnewuser", user.addNewUser);
+router.post("/addnewuser", user.authenticateJWT, user.addNewUser);
 router.post("/sendsong", user.sendSong);
-router.post("/playsongfrominbox", user.playSongFromInbox);
+router.post("/playsongfrominbox", user.authenticateJWT, user.playSongFromInbox);
 
 module.exports = router;

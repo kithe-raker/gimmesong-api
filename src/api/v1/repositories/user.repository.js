@@ -1,9 +1,4 @@
-const {
-  pathRef,
-  fs,
-  fa,
-  FieldValue,
-} = require("../../../config/firebase_config");
+const { pathRef, fs, FieldValue } = require("../../../config/firebase_config");
 
 const methods = {
   getUserIdByName: async function (username) {
@@ -16,16 +11,11 @@ const methods = {
   },
   /**
    *
-   * @param {string} idToken user's session token
+   * @param {string} uid user's id
    * @param {string} filter all(default), new
    * @returns
    */
-  queryReceivedSongs: async function (idToken, filter = "all") {
-    const user = await fa.verifyIdToken(idToken).catch((_) => {
-      throw "invalid session token";
-    });
-    const uid = user.uid;
-
+  queryReceivedSongs: async function (uid, filter = "all") {
     const query = pathRef
       .UserInboxCollection(uid)
       .orderBy("receivedAt", "desc");
@@ -103,15 +93,10 @@ const methods = {
   },
 
   /**
-   * @param {string} idToken user's session token
+   * @param {string} uid user's id
    * @param {string} username
    */
-  addNewUser: async function (idToken, username) {
-    const user = await fa.verifyIdToken(idToken).catch((_) => {
-      throw "invalid session token";
-    });
-    const uid = user.uid;
-
+  addNewUser: async function (uid, username) {
     await fs.runTransaction(async (trans) => {
       // ensure that username is unique
       const doc = await trans.get(pathRef.UsernameDocument(username));
@@ -127,16 +112,11 @@ const methods = {
     });
   },
   /**
-   * @param {string} idToken user's session token
+   * @param {string} uid user's id
    * @param {string} inboxId target song in inbox to play
    */
-  playSongFromInbox: async function (idToken, inboxId) {
+  playSongFromInbox: async function (uid, inboxId) {
     if (!inboxId) throw "No inbox's id provided";
-
-    const user = await fa.verifyIdToken(idToken).catch((_) => {
-      throw "invalid session token";
-    });
-    const uid = user.uid;
 
     await pathRef
       .UserInboxCollection(uid)
