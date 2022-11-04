@@ -48,7 +48,13 @@ const methods = {
   },
   sendSong: async function (req, res, next) {
     try {
-      const { recipientUid, message, song } = req.body;
+      const { recipient, message, song } = req.body;
+
+      const { recipientUid, exists } = await UserFunction.getUserIdByName(
+        recipient
+      );
+
+      if (!exists) throw "Not found this username";
 
       // implement song parser to validate song object
       // here
