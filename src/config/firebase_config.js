@@ -2,7 +2,10 @@ const firebase = require("firebase-admin");
 
 // Initialize Firebase for `Production` or `Development` environment
 if (process.env.NODE_ENV === "production") {
-  firebase.initializeApp();
+  firebase.initializeApp({
+    databaseURL:
+      "https://gimmesong-d4f27-default-rtdb.asia-southeast1.firebasedatabase.app",
+  });
 } else {
   const serviceAccount = require("../../secret/gimmesong-firebase-adminsdk.json");
 
