@@ -48,6 +48,7 @@ const methods = {
         this.getCachedSongDetails(songId).then((data) => {
           if (data.exists) {
             receivedData.content.song = data.song;
+            receivedData.id = doc.id;
             results.push(receivedData);
           }
         })
