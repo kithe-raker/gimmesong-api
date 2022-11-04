@@ -31,8 +31,9 @@ const methods = {
     const promises = [];
     const results = [];
 
-    snapshot.docs.forEach((doc) => {
-      const receivedData = doc.data();
+    var resultIndex = 0;
+    for (var index = 0; index < snapshot.docs.length; index++) {
+      const receivedData = snapshot.docs[index];
       const songId = receivedData?.content?.songId;
       if (!songId) return;
 
@@ -41,11 +42,13 @@ const methods = {
           if (data.exists) {
             receivedData.content.song = data.song;
             receivedData.id = doc.id;
-            results.push(receivedData);
+            results[resultIndex] = receivedData;
           }
         })
       );
-    });
+
+      resultIndex++;
+    }
 
     await Promise.all(promises);
 
