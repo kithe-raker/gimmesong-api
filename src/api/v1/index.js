@@ -11,8 +11,8 @@ router.get("/getsongstreams", ytm.getYTSongDetails);
 // about user
 router.get("/getusername", user.getUsername);
 router.get("/usernameexist", user.isUsernameExists);
+router.get("/queryinbox", user.queryUserInbox);
 
-router.post("/queryinbox", user.queryUserInbox);
 router.post("/addnewuser", user.addNewUser);
 router.post("/sendsong", user.sendSong);
 

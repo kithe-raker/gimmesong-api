@@ -1,4 +1,9 @@
-const { pathRef, fs, firebase } = require("../../../config/firebase_config");
+const {
+  pathRef,
+  fs,
+  fa,
+  FieldValue,
+} = require("../../../config/firebase_config");
 
 const methods = {
   getUserIdByName: async function (username) {
@@ -9,15 +14,28 @@ const methods = {
     const doc = await pathRef.UserDocument(uid).get();
     return { username: doc.data()?.username, exists: doc.exists };
   },
-  queryReceivedSongs: async function (uid, onlyNewSong = false) {
+  /**
+   *
+   * @param {string} idToken user's session token
+   * @param {string} filter all(default), new
+   * @returns
+   */
+  queryReceivedSongs: async function (idToken, filter = "all") {
+    const user = await fa.verifyIdToken(idToken).catch((_) => {
+      throw "invalid session token";
+    });
+    const uid = user.uid;
+
     const query = pathRef
       .UserInboxCollection(uid)
       .orderBy("receivedAt", "desc");
 
-    const snapshot = onlyNewSong
-      ? await query.where("played", "==", false).get()
-      : await query.get();
+    const snapshot =
+      filter == "new"
+        ? await query.where("played", "==", false).get()
+        : await query.get();
 
+    // Get every song's details in inbox
     const promises = [];
     const results = [];
 
@@ -67,27 +85,35 @@ const methods = {
     batch.create(pathRef.UserInboxCollection(recipientUid).doc(), {
       content: { message, songId: song.videoId },
       played: false,
-      receivedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      receivedAt: FieldValue.serverTimestamp(),
       recipient: recipientUid,
     });
     batch.set(
       pathRef.SongDocument(song.videoId),
       {
         ...song,
-        given: firebase.firestore.FieldValue.increment(1),
-        lastestGiven: firebase.firestore.FieldValue.serverTimestamp(),
+        given: FieldValue.increment(1),
+        lastestGiven: FieldValue.serverTimestamp(),
       },
       { merge: true }
     );
 
     await batch.commit();
   },
+  /**
+   * @param {string} idToken user's session token
+   * @param {string} username
+   */
+  addNewUser: async function (idToken, username) {
+    const user = await fa.verifyIdToken(idToken).catch((_) => {
+      throw "invalid session token";
+    });
+    const uid = user.uid;
 
-  addNewUser: async function (uid, username) {
     await fs.runTransaction(async (trans) => {
       // ensure that username is unique
       const doc = await trans.get(pathRef.UsernameDocument(username));
-      if (doc.exists) throw "This Username already exists";
+      if (doc.exists) throw "This Username already taken";
 
       // add new user's data
       trans.create(pathRef.UsernameDocument(username), {

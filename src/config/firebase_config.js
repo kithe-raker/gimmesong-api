@@ -12,6 +12,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const fs = firebase.firestore();
+const FieldValue = firebase.firestore.FieldValue;
+const fa = firebase.auth();
 
 const pathRef = {
   // every user relevant path
@@ -37,4 +39,4 @@ const pathRef = {
   },
 };
 
-module.exports = { firebase, fs, pathRef };
+module.exports = { firebase, fs, fa, FieldValue, pathRef };

@@ -33,9 +33,15 @@ const methods = {
   // },
   queryUserInbox: async function (req, res, next) {
     try {
-      const { uid, onlyNewSong } = req.body;
+      const authHeader = req.headers.authorization;
+      const idToken = _getUserIdToken(authHeader);
+      if (!idToken) {
+        res.status(401).json({ details: "required authorization" });
+        return;
+      }
 
-      const results = await UserFunction.queryReceivedSongs(uid, onlyNewSong);
+      const filter = req.query?.filter ?? "all";
+      const results = await UserFunction.queryReceivedSongs(idToken, filter);
 
       res.json({ success: true, results });
     } catch (error) {
@@ -45,8 +51,15 @@ const methods = {
 
   addNewUser: async function (req, res, next) {
     try {
-      const { uid, username } = req.body;
-      await UserFunction.addNewUser(uid, username);
+      const authHeader = req.headers.authorization;
+      const idToken = _getUserIdToken(authHeader);
+      if (!idToken) {
+        res.status(401).json({ details: "required authorization" });
+        return;
+      }
+
+      const { username } = req.body;
+      await UserFunction.addNewUser(idToken, username);
 
       res.json({ success: true });
     } catch (error) {
@@ -82,5 +95,16 @@ const methods = {
     }
   },
 };
+
+// ==================== Private function ====================
+
+function _getUserIdToken(authHeader) {
+  if (!authHeader) {
+    return;
+  }
+
+  const idToken = authHeader.split(" ")[1];
+  return idToken;
+}
 
 module.exports = methods;
