@@ -73,7 +73,11 @@ const methods = {
 
       res.json({ success: true });
     } catch (error) {
-      res.status(500).json(error);
+      if (error == "Not found this username") {
+        res.status(404).json(error);
+      } else {
+        res.status(500).json(error);
+      }
     }
   },
 };
