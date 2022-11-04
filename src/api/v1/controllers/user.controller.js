@@ -11,6 +11,16 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  isUsernameExists: async function (req, res, next) {
+    try {
+      const username = req.query?.username;
+      const { exists } = await UserFunction.getUserIdByName(username);
+
+      res.json({ success: true, results: { exists } });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   // getUserId: async function (req, res, next) {
   //   try {
   //     const username = req.query?.username;
