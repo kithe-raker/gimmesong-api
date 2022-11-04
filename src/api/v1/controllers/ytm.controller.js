@@ -11,7 +11,6 @@ const methods = {
 
       res.json({ success: true, ...results });
     } catch (error) {
-      console.log(error);
       res.status(500).json(error);
     }
   },
@@ -23,7 +22,6 @@ const methods = {
 
       res.json({ success: true, results });
     } catch (error) {
-      console.log(error);
       res.status(500).json(error);
     }
   },

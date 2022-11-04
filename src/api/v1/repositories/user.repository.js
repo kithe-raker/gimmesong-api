@@ -1,4 +1,5 @@
 const { pathRef, fs, FieldValue } = require("../../../config/firebase_config");
+const { SongSchema } = require("../schemas/ytm.schema");
 
 const methods = {
   getUserIdByName: async function (username) {
@@ -78,15 +79,23 @@ const methods = {
       receivedAt: FieldValue.serverTimestamp(),
       recipient: recipientUid,
     });
-    batch.set(
-      pathRef.SongDocument(song.videoId),
-      {
-        ...song,
-        given: FieldValue.increment(1),
-        lastestGiven: FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
+
+    // validate song object
+    const { error, songObj } = SongSchema.validate(song);
+
+    const songDocData = {
+      given: FieldValue.increment(1),
+      lastestGiven: FieldValue.serverTimestamp(),
+    };
+
+    // if valid, update cached song details in db
+    if (!error) {
+      Object.assign(songDocData, ...songObj);
+    }
+
+    batch.set(pathRef.SongDocument(song.videoId), songDocData, {
+      merge: true,
+    });
 
     await batch.commit();
   },
@@ -123,5 +132,8 @@ const methods = {
       .update({ played: true });
   },
 };
+
+// ==================== Private function ====================
+function _validateSongObject(song) {}
 
 module.exports = methods;
