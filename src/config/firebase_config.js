@@ -4,7 +4,7 @@ const firebase = require("firebase-admin");
 if (process.env.NODE_ENV === "production") {
   firebase.initializeApp();
 } else {
-  const serviceAccount = require("../secret/gimmesong-firebase-adminsdk.json");
+  const serviceAccount = require("../../secret/gimmesong-firebase-adminsdk.json");
 
   firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
