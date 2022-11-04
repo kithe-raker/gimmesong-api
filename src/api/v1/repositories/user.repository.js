@@ -98,7 +98,7 @@ const methods = {
       merge: true,
     });
 
-    Promise.all([await incrementSongSentStats(), await batch.commit()]);
+    await Promise.all([incrementSongSentStats(), batch.commit()]);
   },
 
   /**
