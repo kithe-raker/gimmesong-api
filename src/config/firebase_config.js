@@ -1,5 +1,6 @@
 const firebase = require("firebase-admin");
 
+// realtime database's url
 const db_url =
   "https://gimmesong-d4f27-default-rtdb.asia-southeast1.firebasedatabase.app";
 
