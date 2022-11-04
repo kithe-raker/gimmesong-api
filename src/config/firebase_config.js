@@ -13,6 +13,8 @@ if (process.env.NODE_ENV === "production") {
 
 const fs = firebase.firestore();
 const FieldValue = firebase.firestore.FieldValue;
+const ServerValue = firebase.database.ServerValue;
+const rtdb = firebase.database();
 const fa = firebase.auth();
 
 const pathRef = {
@@ -37,6 +39,9 @@ const pathRef = {
     if (!id) throw "no id provided";
     return pathRef.SongsCollection.doc(id);
   },
+
+  // stats realtime db
+  SongSentStatsRef: rtdb.ref("total_song_sent"),
 };
 
-module.exports = { firebase, fs, fa, FieldValue, pathRef };
+module.exports = { firebase, fs, fa, FieldValue, ServerValue, pathRef, rtdb };
