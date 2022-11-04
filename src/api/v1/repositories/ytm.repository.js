@@ -81,7 +81,8 @@ function _parseContents(contents, filter) {
   let len = contents.length;
   const type = filter.includes("playlists") ? "playlists" : filter;
   while (--len > -1) {
-    const shelf = { contents: [], header: { title: "" } };
+    var shelfContents = [];
+
     const section = contents[len];
 
     if (section && section.itemSectionRenderer) {
@@ -103,13 +104,10 @@ function _parseContents(contents, filter) {
 
     // If the section has an array at the property `contents` - parse it.
     if (items) {
-      const _results = _parseResults(items, type);
-      shelf.contents = _results;
+      shelfContents = _parseResults(items, type);
     }
-    if (musicShelf.title) {
-      shelf.header.title = musicShelf.title?.runs[0]?.text;
-    }
-    results.unshift(shelf);
+
+    results.unshift(...shelfContents);
   }
   return { results, continuation };
 }
