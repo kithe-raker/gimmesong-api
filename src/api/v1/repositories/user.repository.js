@@ -31,34 +31,35 @@ const methods = {
     const promises = [];
     const results = [];
 
-    var resultIndex = 0;
+    var resultIndexs = {};
 
-    snapshot.docs.forEach((doc) => {
+    for (let index = 0; index < snapshot.docs.length; index++) {
+      const doc = snapshot.docs[index];
       const receivedData = doc.data();
 
       const songId = receivedData?.content?.songId;
       if (!songId) return;
+
+      resultIndexs[songId] = index;
 
       promises.push(
         this.getCachedSongDetails(songId).then((data) => {
           if (data.exists) {
             receivedData.content.song = data.song;
             receivedData.id = doc.id;
-            results[resultIndex] = receivedData;
+            results[resultIndexs[songId]] = receivedData;
           }
         })
       );
-
-      resultIndex++;
-    });
+    }
 
     await Promise.all(promises);
 
-    return results;
+    return results.filter((result) => result != null && result != undefined);
   },
   getCachedSongDetails: async function (songId) {
     const doc = await pathRef.SongDocument(songId).get();
-    return { song: doc.data(), exists: doc.exists };
+    return { song: doc.data(), exists: doc.exists && doc.data().videoId };
   },
 
   /**
