@@ -88,7 +88,7 @@ const methods = {
     });
 
     // validate song object
-    const { error, songObj } = SongSchema.validate(song);
+    const { error } = SongSchema.validate(song);
 
     const songDocData = {
       given: FieldValue.increment(1),
@@ -100,7 +100,7 @@ const methods = {
       throw error.message;
     }
 
-    Object.assign(songDocData, ...songObj);
+    Object.assign(songDocData, song);
 
     batch.set(pathRef.SongDocument(song.videoId), songDocData, {
       merge: true,
