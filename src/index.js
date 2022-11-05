@@ -8,7 +8,11 @@ const router = require("./api");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const _whitelist = ["http://localhost:3000"];
+const _whitelist = [
+  "http://localhost:3000",
+  "https://gimmesong.link",
+  "https://www.gimmesong.link",
+];
 const _corsOptions = {
   origin: function (origin, callback) {
     if (_whitelist.indexOf(origin) !== -1 || !origin) {
