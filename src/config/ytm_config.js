@@ -14,13 +14,6 @@ const Endpoints = {
   //   Next: "next",
 };
 
-const Endpoint_names = {
-  Search: "search",
-  Player: "player",
-  //   Browse: "browse",
-  //   Next: "next",
-};
-
 module.exports = {
   API_BASE_URL,
   API_ORIGIN,
@@ -28,5 +21,4 @@ module.exports = {
   WEB_REMIX_KEY,
   ANDROID_KEY,
   Endpoints,
-  Endpoint_names
 };

@@ -2,7 +2,7 @@ const { queryParams } = require("../helpers");
 const {
   API_BASE_URL,
   WEB_REMIX_KEY,
-  Endpoint_names,
+  Endpoints,
   ANDROID_KEY,
   API_ORIGIN,
 } = require("../../../config/ytm_config");
@@ -30,7 +30,7 @@ const methods = {
     // create a request
     const request = fetch(
       API_BASE_URL +
-        Endpoint_names.Search +
+        Endpoints.Search +
         "?" +
         (continuation
           ? queryParams(continuation) + `&sp=EgWKAQIIAWoKEAMQBBAKEAkQBQ%3D%3D&`
@@ -64,7 +64,7 @@ const methods = {
     const body = { context, ...params };
 
     const request = fetch(
-      API_BASE_URL + Endpoint_names.Player + `?key=${ANDROID_KEY}`,
+      API_BASE_URL + Endpoints.Player + `?key=${ANDROID_KEY}`,
       {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
