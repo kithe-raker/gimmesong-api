@@ -40,7 +40,7 @@ const methods = {
     if (!response.ok) {
       // Suggestion (check for correctness before using):
       // return new Response(response.statusText, { status: response.status });
-      return error(response.status, response.statusText);
+      throw "Error Unplayable";
     }
     const data = await response.json();
 

@@ -96,9 +96,11 @@ const methods = {
     };
 
     // if valid, update cached song details in db
-    if (!error) {
-      Object.assign(songDocData, ...songObj);
+    if (error) {
+      throw error.message;
     }
+
+    Object.assign(songDocData, ...songObj);
 
     batch.set(pathRef.SongDocument(song.videoId), songDocData, {
       merge: true,
@@ -139,8 +141,5 @@ const methods = {
       .update({ played: true });
   },
 };
-
-// ==================== Private function ====================
-function _validateSongObject(song) {}
 
 module.exports = methods;
