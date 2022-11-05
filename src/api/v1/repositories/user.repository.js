@@ -47,7 +47,7 @@ const methods = {
           if (data.exists) {
             receivedData.content.song = data.song;
             receivedData.id = doc.id;
-            results[doc.id] = receivedData;
+            results[resultIndexs[doc.id]] = receivedData;
           }
         })
       );
