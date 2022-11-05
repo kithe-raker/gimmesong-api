@@ -77,6 +77,7 @@ const methods = {
    */
   sendSong: async function (recipientUid, message, song) {
     if (!song?.videoId) throw "No song's id provided";
+    if (!message) throw "No message provided";
     if (!recipientUid) throw "No recipient's uid provided";
 
     const batch = fs.batch();
