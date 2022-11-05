@@ -25,7 +25,7 @@ const schemas = {
           placeholder: Joi.string(),
         })
       ),
-    length: Joi.string().required(),
+    length: Joi.string(),
   }).unknown(true),
 };
 

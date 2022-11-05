@@ -24,13 +24,7 @@ const methods = {
       },
       videoId: flexCol0.navigationEndpoint?.watchEndpoint?.videoId || "",
       thumbnails: thumbnails,
-      length:
-        "fixedColumns" in item &&
-        item.fixedColumns[0]?.musicResponsiveListItemFixedColumnRenderer?.text
-          ?.runs?.length
-          ? item.fixedColumns[0]?.musicResponsiveListItemFixedColumnRenderer
-              ?.text?.runs[0]?.text
-          : undefined,
+      length: subtitles[4]?.text ?? "",
     };
 
     if (Array.isArray(Item.subtitle) && Item.subtitle[0].text === "Artist") {
