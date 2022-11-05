@@ -22,10 +22,11 @@ const schemas = {
           url: Joi.string().required(),
           width: Joi.number(),
           height: Joi.number(),
+          placeholder: Joi.string(),
         })
       ),
     length: Joi.string().required(),
-  }),
+  }).unknown(true),
 };
 
 module.exports = { ...schemas };
