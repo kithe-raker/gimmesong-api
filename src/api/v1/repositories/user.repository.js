@@ -40,14 +40,14 @@ const methods = {
       const songId = receivedData?.content?.songId;
       if (!songId) return;
 
-      resultIndexs[songId] = index;
+      resultIndexs[doc.id] = index;
 
       promises.push(
         this.getCachedSongDetails(songId).then((data) => {
           if (data.exists) {
             receivedData.content.song = data.song;
             receivedData.id = doc.id;
-            results[resultIndexs[songId]] = receivedData;
+            results[doc.id] = receivedData;
           }
         })
       );
