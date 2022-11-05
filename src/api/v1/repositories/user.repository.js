@@ -32,8 +32,10 @@ const methods = {
     const results = [];
 
     var resultIndex = 0;
-    for (var index = 0; index < snapshot.docs.length; index++) {
-      const receivedData = snapshot.docs[index];
+
+    snapshot.docs.forEach((doc) => {
+      const receivedData = doc.data();
+
       const songId = receivedData?.content?.songId;
       if (!songId) return;
 
@@ -48,7 +50,7 @@ const methods = {
       );
 
       resultIndex++;
-    }
+    });
 
     await Promise.all(promises);
 
