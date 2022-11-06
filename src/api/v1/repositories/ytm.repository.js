@@ -32,11 +32,10 @@ const methods = {
   /**
    * Right now only returning streaming data
    * @param {string} id
-   * @param {string} clientIp
    * @returns
    */
-  getSongDetails: async function (id, clientIp) {
-    const response = await ytm.songDetailsRequest(id, clientIp);
+  getSongDetails: async function (id) {
+    const response = await ytm.songDetailsRequest(id);
 
     if (!response.ok) {
       // Suggestion (check for correctness before using):
