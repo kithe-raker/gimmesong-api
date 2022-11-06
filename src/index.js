@@ -12,6 +12,8 @@ const _whitelist = [
   "http://localhost:3000",
   "https://gimmesong.link",
   "https://www.gimmesong.link",
+  "https://gimmesong-nextjs.vercel.app",
+  "https://www.gimmesong-nextjs.vercel.app",
 ];
 const _corsOptions = {
   origin: function (origin, callback) {
