@@ -64,6 +64,11 @@ const methods = {
     }
     return { streams: arr };
   },
+  PipedSongDetailsParser: function (data) {
+    const streams = data?.audioStreams;
+    streams.sort((a, b) => (b?.bitrate ?? 0) - (a?.bitrate ?? 0));
+    return { streams };
+  },
 };
 
 // ==================== Private function ====================

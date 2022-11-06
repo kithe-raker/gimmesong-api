@@ -74,9 +74,7 @@ const methods = {
     //     method: "POST",
     //   }
     // );
-    const request = fetch(
-      `https://beatbump.ml/api/v1/player.json?videoId=${id}`
-    );
+    const request = fetch(`https://pipedapi.kavin.rocks/streams/${id}`);
     return request;
   },
 };

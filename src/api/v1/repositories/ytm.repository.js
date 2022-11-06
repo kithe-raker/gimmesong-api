@@ -1,4 +1,4 @@
-const { SearchContentParser, SongDetailsParser } = require("../helpers");
+const { SearchContentParser, PipedSongDetailsParser } = require("../helpers");
 const ytm = require("../services/ytm_service");
 
 const methods = {
@@ -44,15 +44,11 @@ const methods = {
     }
     const data = await response.json();
 
-    if (
-      data &&
-      !data?.streamingData &&
-      data?.playabilityStatus.status === "UNPLAYABLE"
-    ) {
+    if (!data?.audioStreams) {
       throw "Error Unplayable";
     }
 
-    const result = SongDetailsParser(data);
+    const result = PipedSongDetailsParser(data);
     return result;
   },
 };
