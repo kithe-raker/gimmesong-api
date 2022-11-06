@@ -16,11 +16,8 @@ const methods = {
   },
   getYTSongDetails: async function (req, res, next) {
     try {
-      const clientIp = req.ip;
-
       const id = req.query?.id ?? "";
-      console.log("ip: ", clientIp);
-      const results = await ytm_func.getSongDetails(id, clientIp);
+      const results = await ytm_func.getSongDetails(id);
 
       res.json({ success: true, results });
     } catch (error) {
