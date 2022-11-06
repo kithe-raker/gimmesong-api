@@ -50,7 +50,7 @@ const methods = {
 
     return request;
   },
-  songDetailsRequest: function (id, includeArtist = true) {
+  songDetailsRequest: function (id, clientIp, includeArtist = true) {
     const context = {
         client: { clientName: "IOS", clientVersion: "17.13.3", hl: "en" },
       },
@@ -69,6 +69,7 @@ const methods = {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
           Origin: API_ORIGIN,
+          "x-forwarded-for": clientIp,
         },
         body: JSON.stringify(body),
         method: "POST",
