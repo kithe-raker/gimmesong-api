@@ -30,7 +30,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(router);
-app.set("trust proxy", true);
 
 app.get("/", (req, res, next) => {
   res.send(`OK`);
