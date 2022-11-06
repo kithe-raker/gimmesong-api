@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-const proxy = require("express-http-proxy");
 
 require("dotenv").config();
 
@@ -34,16 +33,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(router);
-
-app.use(
-  "/api/v1/songstreams",
-  proxy("beatbump.ml", {
-    proxyReqPathResolver: function (req, res) {
-      const id = req.query?.id ?? "";
-      return `/api/v1/player.json?videoId=${id}`;
-    },
-  })
-);
 
 app.get("/", (req, res, next) => {
   res.send(`OK`);
