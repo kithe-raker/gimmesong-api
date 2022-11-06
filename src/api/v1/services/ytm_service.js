@@ -51,28 +51,31 @@ const methods = {
     return request;
   },
   songDetailsRequest: function (id, includeArtist = true) {
-    const context = {
-        client: { clientName: "IOS", clientVersion: "17.13.3", hl: "en" },
-      },
-      params = {
-        videoId: id,
-        racyCheckOk: true,
-        contentCheckOk: true,
-        playlistId: "",
-        params: "",
-      };
-    const body = { context, ...params };
+    // const context = {
+    //     client: { clientName: "IOS", clientVersion: "17.13.3", hl: "en" },
+    //   },
+    //   params = {
+    //     videoId: id,
+    //     racyCheckOk: true,
+    //     contentCheckOk: true,
+    //     playlistId: "",
+    //     params: "",
+    //   };
+    // const body = { context, ...params };
 
+    // const request = fetch(
+    //   API_BASE_URL + Endpoints.Player + `?key=${ANDROID_KEY}`,
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json; charset=utf-8",
+    //       Origin: API_ORIGIN,
+    //     },
+    //     body: JSON.stringify(body),
+    //     method: "POST",
+    //   }
+    // );
     const request = fetch(
-      API_BASE_URL + Endpoints.Player + `?key=${ANDROID_KEY}`,
-      {
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          Origin: API_ORIGIN,
-        },
-        body: JSON.stringify(body),
-        method: "POST",
-      }
+      `https://beatbump.ml/api/v1/player.json?videoId=${id}`
     );
     return request;
   },
