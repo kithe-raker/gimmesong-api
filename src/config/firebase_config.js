@@ -60,6 +60,9 @@ const pathRef = {
     if (!username) throw "no username provided";
     return pathRef.UsernamesCollection.doc(username);
   },
+  UserSongRequestsCollection: function (uid) {
+    return pathRef.UserDocument(uid).collection("user-song-requests");
+  },
 
   // song relevant path
   SongsCollection: fs.collection("Songs"),
@@ -67,6 +70,24 @@ const pathRef = {
     if (!id) throw "no id provided";
     return pathRef.SongsCollection.doc(id);
   },
+
+  // song request relavant path
+  SongRequestsCollection: fs.collection("SongRequests"),
+  SongRequestsLangCollection: function (langTag) {
+    if (!langTag) throw "no language Tag provided";
+    return pathRef.SongRequestsCollection.doc(langTag).collection(
+      "song-requests"
+    );
+  },
+  SongRequestsCollector: function (langTag, id) {
+    if (!id) throw "no id provided";
+
+    return pathRef
+      .SongRequestsLangCollection(langTag)
+      .doc(id)
+      .collection("request-collector");
+  },
+  SongRequestLinksCollection: fs.collection("SongRequestLinks"),
 
   // stats realtime db
   SongSentStatsRef: rtdb.Default.ref("total_song_sent"),
