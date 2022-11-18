@@ -3,6 +3,7 @@ const router = express.Router();
 
 const ytm = require("./controllers/ytm.controller");
 const user = require("./controllers/user.controller");
+const songRequest = require("./controllers/songRequest.controller");
 const stats = require("./controllers/stats.controller");
 
 // youtube music
@@ -17,6 +18,17 @@ router.get("/queryinbox", user.authenticateJWT, user.queryUserInbox);
 router.post("/addnewuser", user.authenticateJWT, user.addNewUser);
 router.post("/sendsong", user.sendSong);
 router.post("/playsongfrominbox", user.authenticateJWT, user.playSongFromInbox);
+
+// song-request
+router.post(
+  "/createsongrequest",
+  user.authenticateJWT,
+  songRequest.createSongRequest
+);
+router.post(
+  "/incrementplaysongrequest",
+  songRequest.incrementTotalPlayStats
+);
 
 // stats
 router.get("/totalsongsent", stats.getTotalSongSent);

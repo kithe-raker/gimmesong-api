@@ -1,4 +1,5 @@
 const firebase = require("firebase-admin");
+const LangTagHelper = require("../api/v1/helpers/language_tag.helper");
 
 // realtime database's url
 const db_url =
@@ -74,12 +75,11 @@ const pathRef = {
   // song request relavant path
   SongRequestsCollection: fs.collection("SongRequests"),
   SongRequestsLangCollection: function (langTag) {
-    if (!langTag) throw "no language Tag provided";
-    return pathRef.SongRequestsCollection.doc(langTag).collection(
-      "song-requests"
-    );
+    const tag = LangTagHelper.validateTag(langTag);
+
+    return pathRef.SongRequestsCollection.doc(tag).collection("song-requests");
   },
-  SongRequestsCollector: function (langTag, id) {
+  SongRequestItemCollector: function (langTag, id) {
     if (!id) throw "no id provided";
 
     return pathRef
@@ -98,6 +98,12 @@ const pathRef = {
     if (!request_id) throw "no request id provided";
 
     return pathRef.SongRequestPlayCouterRef.child(`${request_id}/total`);
+  },
+  SongRequestTotalRef: rtdb.SongRequest.ref("total_request"),
+  SongRequestLangTotalRef: function (langTag) {
+    const tag = LangTagHelper.validateTag(langTag);
+
+    return pathRef.SongRequestTotalRef.child(tag);
   },
 };
 
