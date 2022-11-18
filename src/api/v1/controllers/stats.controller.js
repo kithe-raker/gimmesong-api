@@ -10,6 +10,15 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  queryTopChartSongs: async function (req, res, next) {
+    try {
+      const results = await StatsFunction.queryTopChartSongs();
+
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
 };
 
 module.exports = methods;
