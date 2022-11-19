@@ -1,4 +1,5 @@
 const firebase = require("firebase-admin");
+const { applicationDefault } = require("firebase-admin/app");
 const LangTagHelper = require("../api/v1/helpers/language_tag.helper");
 
 // realtime database's url
@@ -10,17 +11,19 @@ const songRequest_db_url =
 // Initialize Firebase for `Production` or `Development` environment
 if (process.env.NODE_ENV === "production") {
   firebase.initializeApp({
+    credential: applicationDefault(),
     databaseURL: db_url,
   });
   firebase.initializeApp(
     {
+      credential: applicationDefault(),
       databaseURL: songRequest_db_url,
     },
     "SongRequest"
   );
 } else {
   const serviceAccount = require("../../secret/gimmesong-firebase-adminsdk.json");
- 
+
   firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
     databaseURL: db_url,
