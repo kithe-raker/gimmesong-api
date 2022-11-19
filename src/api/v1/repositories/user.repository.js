@@ -78,12 +78,6 @@ const methods = {
     if (!recipientUid) throw "No recipient's uid provided";
 
     const batch = fs.batch();
-    batch.create(pathRef.UserInboxCollection(recipientUid).doc(), {
-      content: { message, songId: song.videoId },
-      played: false,
-      receivedAt: FieldValue.serverTimestamp(),
-      recipient: recipientUid,
-    });
 
     // validate song object
     const { error } = SongSchema.validate(song);
@@ -102,6 +96,13 @@ const methods = {
 
     batch.set(pathRef.SongDocument(song.videoId), songDocData, {
       merge: true,
+    });
+
+    batch.create(pathRef.UserInboxCollection(recipientUid).doc(), {
+      content: { message, songId: song.videoId },
+      played: false,
+      receivedAt: FieldValue.serverTimestamp(),
+      recipient: recipientUid,
     });
 
     await Promise.all([incrementSongSentStats(), batch.commit()]);
