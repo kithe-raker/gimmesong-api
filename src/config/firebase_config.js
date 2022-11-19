@@ -11,12 +11,10 @@ const songRequest_db_url =
 // Initialize Firebase for `Production` or `Development` environment
 if (process.env.NODE_ENV === "production") {
   firebase.initializeApp({
-    credential: applicationDefault(),
     databaseURL: db_url,
   });
   firebase.initializeApp(
     {
-      credential: applicationDefault(),
       databaseURL: songRequest_db_url,
     },
     "SongRequest"
