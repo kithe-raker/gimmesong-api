@@ -9,7 +9,50 @@ const { SongSchema } = require("../schemas/ytm.schema");
 const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
-  querySongRequest: function (params) {},
+  /**
+   *
+   * @param {*} langTag
+   * @param {*} param1 orderBy(mostview/newest)
+   * @returns
+   */
+  querySongRequest: async function (
+    langTag,
+    { orderBy = "mostview", lastRequestId = "", limit = 10 }
+  ) {
+    var lastRequestDoc;
+    const orderByField = orderBy != "mostview" ? "createdAt" : "views";
+
+    if (lastRequestId) {
+      const doc = await pathRef
+        .SongRequestsLangCollection(langTag)
+        .doc(lastRequestId)
+        .get();
+
+      if (doc && doc.exists) lastRequestDoc = doc;
+    }
+
+    const query = lastRequestDoc
+      ? pathRef
+          .SongRequestsLangCollection(langTag)
+          .orderBy(orderByField, "desc")
+          .startAfter(lastRequestDoc)
+          .limit(limit)
+      : pathRef
+          .SongRequestsLangCollection(langTag)
+          .orderBy(orderByField, "desc")
+          .limit(limit);
+
+    const requestSnapshot = await query.get();
+
+    if (requestSnapshot.docs < 1) return { contents: [] };
+
+    return {
+      contents: requestSnapshot.docs.map((doc) =>
+        Object.assign({ id: doc.id }, doc.data())
+      ),
+      lastRequestId: requestSnapshot.docs[requestSnapshot.docs.length - 1].id,
+    };
+  },
 
   getLinkDetails: async function (linkId) {
     const doc = await pathRef.SongRequestLinksDoc(linkId).get();

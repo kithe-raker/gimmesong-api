@@ -11,6 +11,36 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  queryMostViewSongRequest: async function (req, res, next) {
+    try {
+      const { langTag, lastRequestId, limit } = req.body;
+
+      const results = await SongRequestFunction.querySongRequest(langTag, {
+        orderBy: "mostview",
+        limit: limit,
+        lastRequestId: lastRequestId,
+      });
+
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
+  queryNewestSongRequest: async function (req, res, next) {
+    try {
+      const { langTag, lastRequestId, limit } = req.body;
+
+      const results = await SongRequestFunction.querySongRequest(langTag, {
+        orderBy: "newest",
+        limit: limit,
+        lastRequestId: lastRequestId,
+      });
+
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   createSongRequest: async function (req, res, next) {
     try {
       const uid = _getUserId(req);
