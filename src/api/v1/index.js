@@ -36,12 +36,12 @@ router.post(
 router.post("/songrequest/items", songRequest.querySongRequestItem);
 
 router.post(
-  "/createsongrequest",
+  "/songrequest/create",
   user.authenticateJWT,
   songRequest.createSongRequest
 );
-router.post("/addsongtosongrequest", songRequest.addSong);
-router.post("/incrementviewsongrequest", songRequest.incrementViews);
+router.post("/songrequest/addsong", songRequest.addSong);
+router.post("/songrequest/incrementview", songRequest.incrementViews);
 
 // stats
 router.get("/totalsongsent", stats.getTotalSongSent);
