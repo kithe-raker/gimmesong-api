@@ -3,36 +3,60 @@ const { applicationDefault } = require("firebase-admin/app");
 const LangTagHelper = require("../api/v1/helpers/language_tag.helper");
 
 // realtime database's url
-const db_url =
-  "https://gimmesong-d4f27-default-rtdb.asia-southeast1.firebasedatabase.app";
-const songRequest_db_url =
-  "https://gimmesong-song-request.asia-southeast1.firebasedatabase.app";
+const _databaseUrl = {
+  production: {
+    default:
+      "https://gimmesong-d4f27-default-rtdb.asia-southeast1.firebasedatabase.app",
+    songRequest:
+      "https://gimmesong-song-request.asia-southeast1.firebasedatabase.app",
+  },
+  development: {
+    default: "https://gimmesong-develop-default-rtdb.firebaseio.com/",
+    songRequest: "https://gimmesong-develop-default-rtdb.firebaseio.com/",
+  },
+};
 
 // Initialize Firebase for `Production` or `Development` environment
-if (process.env.NODE_ENV === "production") {
-  firebase.initializeApp({
-    databaseURL: db_url,
-  });
-  firebase.initializeApp(
-    {
-      databaseURL: songRequest_db_url,
-    },
-    "SongRequest"
-  );
-} else {
-  const serviceAccount = require("../../secret/gimmesong-firebase-adminsdk.json");
+switch (process.env.NODE_ENV) {
+  case "production":
+    firebase.initializeApp({
+      databaseURL: _databaseUrl.production.default,
+    });
+    firebase.initializeApp(
+      {
+        databaseURL: _databaseUrl.production.songRequest,
+      },
+      "SongRequest"
+    );
+    break;
 
-  firebase.initializeApp({
-    credential: firebase.credential.cert(serviceAccount),
-    databaseURL: db_url,
-  });
-  firebase.initializeApp(
-    {
+  case "pre-production":
+    firebase.initializeApp({
+      databaseURL: _databaseUrl.development.default,
+    });
+    firebase.initializeApp(
+      {
+        databaseURL: _databaseUrl.development.default,
+      },
+      "SongRequest"
+    );
+    break;
+
+  default:
+    const serviceAccount = require("../../secret/gimmesong-firebase-adminsdk.json");
+
+    firebase.initializeApp({
       credential: firebase.credential.cert(serviceAccount),
-      databaseURL: songRequest_db_url,
-    },
-    "SongRequest"
-  );
+      databaseURL: _databaseUrl.development.default,
+    });
+    firebase.initializeApp(
+      {
+        credential: firebase.credential.cert(serviceAccount),
+        databaseURL: _databaseUrl.development.default,
+      },
+      "SongRequest"
+    );
+    break;
 }
 
 const fs = firebase.firestore();
