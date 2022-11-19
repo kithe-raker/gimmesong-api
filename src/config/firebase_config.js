@@ -43,7 +43,7 @@ switch (process.env.NODE_ENV) {
     break;
 
   default:
-    const serviceAccount = require("../../secret/gimmesong-firebase-adminsdk.json");
+    const serviceAccount = require("../../secret/gimmesong-develop-firebase-adminsdk.json");
 
     firebase.initializeApp({
       credential: firebase.credential.cert(serviceAccount),
