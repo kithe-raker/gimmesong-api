@@ -9,6 +9,12 @@ const { SongSchema } = require("../schemas/ytm.schema");
 const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
+  querySongRequest: function (params) {},
+
+  getLinkDetails: async function (linkId) {
+    const doc = await pathRef.SongRequestLinksDoc(linkId).get();
+    return { details: doc.data(), exists: doc.exists };
+  },
   /**
    *
    * @param {String} langTag
@@ -134,8 +140,6 @@ const methods = {
 
     await Promise.all([transaction, incrementSongSentStats()]);
   },
-
-  querySongRequest: function (params) {},
 
   // stats
   incrementViews: async function (id, langTag) {

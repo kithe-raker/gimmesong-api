@@ -1,6 +1,16 @@
 const SongRequestFunction = require("../repositories/songRequest.repository");
 
 const methods = {
+  getLinkDetails: async function (req, res, next) {
+    try {
+      const id = req.query?.id;
+
+      const results = await SongRequestFunction.getLinkDetails(id);
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   createSongRequest: async function (req, res, next) {
     try {
       const uid = _getUserId(req);

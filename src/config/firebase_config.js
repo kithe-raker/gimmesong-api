@@ -88,6 +88,10 @@ const pathRef = {
       .collection("request-collector");
   },
   SongRequestLinksCollection: fs.collection("SongRequestLinks"),
+  SongRequestLinksDoc: function (linkId) {
+    if (!linkId) throw "no link's id provided";
+    return fs.collection("SongRequestLinks").doc(linkId);
+  },
 
   // stats realtime db
   SongSentStatsRef: rtdb.Default.ref("total_song_sent"),
