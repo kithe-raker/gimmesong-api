@@ -82,19 +82,17 @@ const methods = {
     // validate song object
     const { error } = SongSchema.validate(song);
 
-    const songDocData = {
-      given: FieldValue.increment(1),
-      lastestGiven: FieldValue.serverTimestamp(),
-    };
-
     // if valid, update cached song details in db
     if (error) {
       throw error.message;
     }
 
-    Object.assign(songDocData, song);
+    Object.assign(song, {
+      given: FieldValue.increment(1),
+      lastestGiven: FieldValue.serverTimestamp(),
+    });
 
-    batch.set(pathRef.SongDocument(song.videoId), songDocData, {
+    batch.set(pathRef.SongDocument(song.videoId), song, {
       merge: true,
     });
 
