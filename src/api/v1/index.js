@@ -33,6 +33,7 @@ router.post(
   user.authenticateJWT,
   songRequest.queryUserSongRequest
 );
+router.post("/songrequest/items", songRequest.querySongRequestItem);
 
 router.post(
   "/createsongrequest",

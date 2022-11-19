@@ -72,6 +72,24 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  querySongRequestItem: async function (req, res, next) {
+    try {
+      const { langTag, requestId, lastItemId, limit } = req.body;
+
+      const results = await SongRequestFunction.querySongRequestItem(
+        langTag,
+        requestId,
+        {
+          limit: limit,
+          lastItemId: lastItemId,
+        }
+      );
+
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   createSongRequest: async function (req, res, next) {
     try {
       const uid = _getUserId(req);

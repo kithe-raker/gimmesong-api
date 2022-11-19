@@ -6,6 +6,7 @@ const {
 } = require("../../../config/firebase_config");
 const LangTagHelper = require("../helpers/language_tag.helper");
 const { SongSchema } = require("../schemas/ytm.schema");
+const SongFunction = require("./song.repository");
 const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
@@ -104,6 +105,77 @@ const methods = {
             }
           }
         )
+      );
+    }
+
+    await Promise.all(promises);
+    results = results.filter((result) => result != null && result != undefined);
+
+    if (results.length < 1) return { contents: [] };
+
+    return {
+      contents: results,
+      lastRequestId: results[results.length - 1].id,
+    };
+  },
+  /**
+   *
+   * @param {string} langTag song request's language tag
+   * @param {string} requestId song request's id
+   * @returns
+   */
+  querySongRequestItem: async function (
+    langTag,
+    requestId,
+    { lastItemId = "", limit = 10 }
+  ) {
+    var lastItemDoc;
+
+    if (lastItemId) {
+      const doc = await pathRef
+        .SongRequestItemCollector(langTag, requestId)
+        .doc(lastItemId)
+        .get();
+
+      if (doc && doc.exists) lastItemDoc = doc;
+    }
+
+    const query = lastItemDoc
+      ? pathRef
+          .SongRequestItemCollector(langTag, requestId)
+          .orderBy("sentAt", "desc")
+          .startAfter(lastItemDoc)
+          .limit(limit)
+      : pathRef
+          .SongRequestItemCollector(langTag, requestId)
+          .orderBy("sentAt", "desc")
+          .limit(limit);
+
+    const snapshot = await query.get();
+
+    // Get every items song's details
+    const promises = [];
+    var results = [];
+
+    var resultIndexs = {};
+
+    for (let index = 0; index < snapshot.docs.length; index++) {
+      const doc = snapshot.docs[index];
+      const receivedData = doc.data();
+
+      const songId = receivedData?.content?.songId;
+      if (!songId) return;
+
+      resultIndexs[doc.id] = index;
+
+      promises.push(
+        SongFunction.getCachedSongDetails(songId).then((data) => {
+          if (data.exists) {
+            receivedData.content.song = data.song;
+            receivedData.id = doc.id;
+            results[resultIndexs[doc.id]] = receivedData;
+          }
+        })
       );
     }
 
@@ -225,17 +297,15 @@ const methods = {
     // validate song object
     const { error } = SongSchema.validate(song);
 
-    const songDocData = {
-      given: FieldValue.increment(1),
-      lastestGiven: FieldValue.serverTimestamp(),
-    };
-
     // if valid, update cached song details in db
     if (error) {
       throw error.message;
     }
 
-    Object.assign(songDocData, song);
+    Object.assign(song, {
+      given: FieldValue.increment(1),
+      lastestGiven: FieldValue.serverTimestamp(),
+    });
 
     const transaction = fs.runTransaction(async (trans) => {
       const doc = await trans.get(targetRequestRef);
@@ -257,7 +327,7 @@ const methods = {
         lastestAdded: FieldValue.serverTimestamp(),
         recentlyAdded: recentlyAdded,
       });
-      trans.set(pathRef.SongDocument(song.videoId), songDocData, {
+      trans.set(pathRef.SongDocument(song.videoId), song, {
         merge: true,
       });
       trans.create(itemRef, {
