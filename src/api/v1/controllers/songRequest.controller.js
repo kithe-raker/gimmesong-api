@@ -21,11 +21,25 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  addSong: async function (req, res, next) {
+    try {
+      const { langTag, requestId, message, song } = req.body;
+
+      await SongRequestFunction.addSongToSongRequest(
+        langTag,
+        requestId,
+        message,
+        song
+      );
+
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   incrementViews: async function (req, res, next) {
     try {
       const { requestId, langTag } = req.body;
-      if (!requestId) throw "no request id provided";
-      if (!langTag) throw "no language tag provided";
 
       await SongRequestFunction.incrementViews(requestId, langTag);
       res.json({ success: true });

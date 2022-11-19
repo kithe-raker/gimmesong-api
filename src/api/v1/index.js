@@ -25,6 +25,7 @@ router.post(
   user.authenticateJWT,
   songRequest.createSongRequest
 );
+router.post("/addsongtosongrequest", songRequest.addSong);
 router.post("/incrementviewsongrequest", songRequest.incrementViews);
 
 // stats

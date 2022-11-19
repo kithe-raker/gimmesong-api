@@ -6,6 +6,7 @@ const {
 } = require("../../../config/firebase_config");
 const LangTagHelper = require("../helpers/language_tag.helper");
 const { SongSchema } = require("../schemas/ytm.schema");
+const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
   /**
@@ -62,6 +63,78 @@ const methods = {
 
     return { shareLinkId: requestLinkDoc.id, requestId: requestDoc.id };
   },
+  /**
+   *
+   * @param {*} langTag
+   * @param {*} requestId
+   * @param {{ artistInfo: {
+   *                artist: Array<{browseId: string,pageType:string,text:string}>
+   *            },
+   *            length: string,
+   *            thumbnails: Array<{height: number,width: number,url:string}>,
+   *            title: string,
+   *            videoId: string
+   *        }} song
+   * @param {*} message
+   */
+  addSongToSongRequest: async function (langTag, requestId, message, song) {
+    if (!song?.videoId) throw "No song's id provided";
+    if (!langTag) throw "No language Tag provided";
+    if (!requestId) throw "No request id provided";
+    if (!message) throw "No message provided";
+
+    const itemRef = pathRef.SongRequestItemCollector(langTag, requestId).doc();
+    const targetRequestRef = pathRef
+      .SongRequestsLangCollection(langTag)
+      .doc(requestId);
+
+    // validate song object
+    const { error } = SongSchema.validate(song);
+
+    const songDocData = {
+      given: FieldValue.increment(1),
+      lastestGiven: FieldValue.serverTimestamp(),
+    };
+
+    // if valid, update cached song details in db
+    if (error) {
+      throw error.message;
+    }
+
+    Object.assign(songDocData, song);
+
+    const transaction = fs.runTransaction(async (trans) => {
+      const doc = await trans.get(targetRequestRef);
+      if (!doc.exists) throw "Target song request not exists";
+
+      const recentlyAdded = doc.data()?.recentlyAdded ?? [];
+      if (recentlyAdded && recentlyAdded.length > 3) {
+        recentlyAdded.shift();
+      }
+
+      recentlyAdded.push({
+        itemId: itemRef.id,
+        songId: song.videoId,
+        thumbnail: song.thumbnails[0] ?? "",
+      });
+
+      trans.update(targetRequestRef, {
+        counter: FieldValue.increment(1),
+        lastestAdded: FieldValue.serverTimestamp(),
+        recentlyAdded: recentlyAdded,
+      });
+      trans.set(pathRef.SongDocument(song.videoId), songDocData, {
+        merge: true,
+      });
+      trans.create(itemRef, {
+        content: { message, songId: song.videoId },
+        sentAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    await Promise.all([transaction, incrementSongSentStats()]);
+  },
+
   querySongRequest: function (params) {},
 
   // stats
