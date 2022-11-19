@@ -58,6 +58,71 @@ const methods = {
 
     return results.filter((result) => result != null && result != undefined);
   },
+  /**
+   *
+   * @param {string} uid user's id
+   * @param {*} param1
+   * @returns
+   */
+  queryInbox: async function (
+    uid,
+    { filter = "all", lastItemId = "", limit = 10 }
+  ) {
+    var lastItemDoc;
+
+    if (lastItemId) {
+      const doc = await pathRef.UserInboxCollection(uid).doc(lastItemId).get();
+      if (doc && doc.exists) lastItemDoc = doc;
+    }
+
+    const query =
+      filter == "new"
+        ? pathRef
+            .UserInboxCollection(uid)
+            .orderBy("receivedAt", "desc")
+            .where("played", "==", false)
+        : pathRef.UserInboxCollection(uid).orderBy("receivedAt", "desc");
+
+    const snapshot = lastItemDoc
+      ? await query.startAfter(lastItemDoc).limit(limit).get()
+      : await query.limit(limit).get();
+
+    // Get every song's details in inbox
+    const promises = [];
+    var results = [];
+
+    var resultIndexs = {};
+
+    for (let index = 0; index < snapshot.docs.length; index++) {
+      const doc = snapshot.docs[index];
+      const receivedData = doc.data();
+
+      const songId = receivedData?.content?.songId;
+      if (!songId) return;
+
+      resultIndexs[doc.id] = index;
+
+      promises.push(
+        SongFunction.getCachedSongDetails(songId).then((data) => {
+          if (data.exists) {
+            receivedData.content.song = data.song;
+            receivedData.id = doc.id;
+            results[resultIndexs[doc.id]] = receivedData;
+          }
+        })
+      );
+    }
+
+    await Promise.all(promises);
+    results = results.filter((result) => result != null && result != undefined);
+
+    if (results.length < 1) return { contents: [] };
+
+    return {
+      contents: results,
+      lastItemId: results[results.length - 1].id,
+    };
+  },
 
   /**
    *

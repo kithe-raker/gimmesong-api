@@ -32,7 +32,7 @@ const methods = {
   //     res.status(500).json(error);
   //   }
   // },
-  queryUserInbox: async function (req, res, next) {
+  queryUserReceivedSongs: async function (req, res, next) {
     try {
       const uid = _getUserId(req);
       if (!uid) {
@@ -42,6 +42,27 @@ const methods = {
 
       const filter = req.query?.filter ?? "all";
       const results = await UserFunction.queryReceivedSongs(uid, filter);
+
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
+  queryUserInbox: async function (req, res, next) {
+    try {
+      const uid = _getUserId(req);
+      if (!uid) {
+        res.status(401).json({ details: "required authorization" });
+        return;
+      }
+
+      const { filter, lastItemId, limit } = req.body;
+
+      const results = await UserFunction.queryInbox(uid, {
+        filter: filter ?? "all",
+        lastItemId,
+        limit,
+      });
 
       res.json({ success: true, results });
     } catch (error) {

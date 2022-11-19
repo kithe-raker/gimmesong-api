@@ -186,7 +186,7 @@ const methods = {
 
     return {
       contents: results,
-      lastRequestId: results[results.length - 1].id,
+      lastItemId: results[results.length - 1].id,
     };
   },
 
