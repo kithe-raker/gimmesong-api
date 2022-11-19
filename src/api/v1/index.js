@@ -24,6 +24,11 @@ router.get("/getsongrequestlinkdetails", songRequest.getLinkDetails);
 
 router.post("/songrequest/mostview", songRequest.queryMostViewSongRequest);
 router.post("/songrequest/newest", songRequest.queryNewestSongRequest);
+router.post(
+  "/songrequest/user",
+  user.authenticateJWT,
+  songRequest.queryUserSongRequest
+);
 
 router.post(
   "/createsongrequest",

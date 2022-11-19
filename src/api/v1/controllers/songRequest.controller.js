@@ -11,6 +11,25 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  queryUserSongRequest: async function (req, res, next) {
+    try {
+      const uid = _getUserId(req);
+      if (!uid) {
+        res.status(401).json({ details: "required authorization" });
+        return;
+      }
+      const { lastRequestId, limit } = req.body;
+
+      const results = await SongRequestFunction.queryUserSongRequest(uid, {
+        limit: limit,
+        lastRequestId: lastRequestId,
+      });
+
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   queryMostViewSongRequest: async function (req, res, next) {
     try {
       const { langTag, lastRequestId, limit } = req.body;

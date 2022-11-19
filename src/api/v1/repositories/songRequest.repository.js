@@ -53,7 +53,81 @@ const methods = {
       lastRequestId: requestSnapshot.docs[requestSnapshot.docs.length - 1].id,
     };
   },
+  queryUserSongRequest: async function (
+    uid,
+    { lastRequestId = "", limit = 10 }
+  ) {
+    var lastRequestDoc;
 
+    if (lastRequestId) {
+      const doc = await pathRef
+        .UserSongRequestsCollection(uid)
+        .doc(lastRequestId)
+        .get();
+
+      if (doc && doc.exists) lastRequestDoc = doc;
+    }
+
+    const query = lastRequestDoc
+      ? pathRef
+          .UserSongRequestsCollection(uid)
+          .orderBy("createdAt", "desc")
+          .startAfter(lastRequestDoc)
+          .limit(limit)
+      : pathRef
+          .UserSongRequestsCollection(uid)
+          .orderBy("createdAt", "desc")
+          .limit(limit);
+
+    const requestRefSnapshot = await query.get();
+
+    // Get every song request's details
+    const promises = [];
+    var results = [];
+
+    var resultIndexs = {};
+
+    for (let index = 0; index < requestRefSnapshot.docs.length; index++) {
+      const doc = requestRefSnapshot.docs[index];
+      const receivedData = doc.data();
+
+      const requestId = receivedData.id;
+      if (!requestId) return;
+
+      resultIndexs[requestId] = index;
+
+      promises.push(
+        this.getSongRequestDetails(requestId, receivedData.language).then(
+          (data) => {
+            if (data.exists) {
+              results[resultIndexs[requestId]] = data.details;
+            }
+          }
+        )
+      );
+    }
+
+    await Promise.all(promises);
+    results = results.filter((result) => result != null && result != undefined);
+
+    if (results.length < 1) return { contents: [] };
+
+    return {
+      contents: results,
+      lastRequestId: results[results.length - 1].id,
+    };
+  },
+
+  getSongRequestDetails: async function (requestId, langTag) {
+    const doc = await pathRef
+      .SongRequestsLangCollection(langTag)
+      .doc(requestId)
+      .get();
+    return {
+      details: Object.assign({ id: doc.id }, doc.data()),
+      exists: doc.exists,
+    };
+  },
   getLinkDetails: async function (linkId) {
     const doc = await pathRef.SongRequestLinksDoc(linkId).get();
     return { details: doc.data(), exists: doc.exists };
