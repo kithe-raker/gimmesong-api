@@ -1,5 +1,6 @@
 const { pathRef, fs, FieldValue } = require("../../../config/firebase_config");
 const { SongSchema } = require("../schemas/ytm.schema");
+const SongFunction = require("./song.repository");
 const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
@@ -43,7 +44,7 @@ const methods = {
       resultIndexs[doc.id] = index;
 
       promises.push(
-        this.getCachedSongDetails(songId).then((data) => {
+        SongFunction.getCachedSongDetails(songId).then((data) => {
           if (data.exists) {
             receivedData.content.song = data.song;
             receivedData.id = doc.id;
@@ -56,10 +57,6 @@ const methods = {
     await Promise.all(promises);
 
     return results.filter((result) => result != null && result != undefined);
-  },
-  getCachedSongDetails: async function (songId) {
-    const doc = await pathRef.SongDocument(songId).get();
-    return { song: doc.data(), exists: doc.exists && doc.data().videoId };
   },
 
   /**
