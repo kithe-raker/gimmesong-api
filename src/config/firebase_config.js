@@ -1,5 +1,4 @@
 const firebase = require("firebase-admin");
-const { applicationDefault } = require("firebase-admin/app");
 const LangTagHelper = require("../api/v1/helpers/language_tag.helper");
 
 // realtime database's url
