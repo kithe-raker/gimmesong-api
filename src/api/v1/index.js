@@ -25,10 +25,7 @@ router.post(
   user.authenticateJWT,
   songRequest.createSongRequest
 );
-router.post(
-  "/incrementplaysongrequest",
-  songRequest.incrementTotalPlayStats
-);
+router.post("/incrementviewsongrequest", songRequest.incrementViews);
 
 // stats
 router.get("/totalsongsent", stats.getTotalSongSent);

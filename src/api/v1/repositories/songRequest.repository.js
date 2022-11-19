@@ -5,6 +5,7 @@ const {
   FieldValue,
 } = require("../../../config/firebase_config");
 const LangTagHelper = require("../helpers/language_tag.helper");
+const { SongSchema } = require("../schemas/ytm.schema");
 
 const methods = {
   /**
@@ -41,6 +42,7 @@ const methods = {
       recentlyAdded: [],
       requester: requesterUid,
       counter: 0,
+      views: 0,
       createdAt: FieldValue.serverTimestamp(),
     });
     batch.create(requestLinkDoc, {
@@ -56,24 +58,23 @@ const methods = {
       createdAt: FieldValue.serverTimestamp(),
     });
 
-    await Promise.all([
-      batch.commit(),
-      this.incrementTotalRequestStats(tag),
-      pathRef.SongRequestPlayCouterTotalRef(requestDoc.id).set(ServerValue.increment(-1)),
-    ]);
+    await Promise.all([batch.commit(), this.incrementTotalRequestStats(tag)]);
 
     return { shareLinkId: requestLinkDoc.id, requestId: requestDoc.id };
   },
   querySongRequest: function (params) {},
 
   // stats
-  incrementTotalPlayStats: async function (id) {
-    const ref = await pathRef.SongRequestPlayCouterTotalRef(id).once("value");
-    if (!ref.exists()) throw "not found provided request id";
+  incrementViews: async function (id, langTag) {
+    if (!id) throw "no request id provided";
+    if (!langTag) throw "no language tag provided";
+
+    const tag = LangTagHelper.validateTag(langTag);
 
     return await pathRef
-      .SongRequestPlayCouterTotalRef(id)
-      .set(ServerValue.increment(-1));
+      .SongRequestsLangCollection(tag)
+      .doc(id)
+      .update({ views: FieldValue.increment(1) });
   },
   incrementTotalRequestStats: async function (languageTag) {
     return await pathRef

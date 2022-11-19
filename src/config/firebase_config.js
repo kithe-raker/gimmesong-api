@@ -93,12 +93,6 @@ const pathRef = {
   SongSentStatsRef: rtdb.Default.ref("total_song_sent"),
 
   // song request stats
-  SongRequestPlayCouterRef: rtdb.SongRequest.ref("play_counter"),
-  SongRequestPlayCouterTotalRef: function (request_id) {
-    if (!request_id) throw "no request id provided";
-
-    return pathRef.SongRequestPlayCouterRef.child(`${request_id}/total`);
-  },
   SongRequestTotalRef: rtdb.SongRequest.ref("total_request"),
   SongRequestLangTotalRef: function (langTag) {
     const tag = LangTagHelper.validateTag(langTag);

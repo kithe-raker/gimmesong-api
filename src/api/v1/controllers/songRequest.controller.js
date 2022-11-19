@@ -21,12 +21,13 @@ const methods = {
       res.status(500).json(error);
     }
   },
-  incrementTotalPlayStats: async function (req, res, next) {
+  incrementViews: async function (req, res, next) {
     try {
-      const { requestId } = req.body;
+      const { requestId, langTag } = req.body;
       if (!requestId) throw "no request id provided";
+      if (!langTag) throw "no language tag provided";
 
-      await SongRequestFunction.incrementTotalPlayStats(requestId);
+      await SongRequestFunction.incrementViews(requestId, langTag);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json(error);
