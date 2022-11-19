@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "production") {
   );
 } else {
   const serviceAccount = require("../../secret/gimmesong-firebase-adminsdk.json");
-
+ 
   firebase.initializeApp({
     credential: firebase.credential.cert(serviceAccount),
     databaseURL: db_url,
