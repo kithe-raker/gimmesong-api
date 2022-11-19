@@ -1,11 +1,23 @@
 const SongRequestFunction = require("../repositories/songRequest.repository");
 
 const methods = {
+  getSongRequestDetailsByLinkId: async function (req, res, next) {
+    try {
+      const linkId = req.params?.linkId;
+
+      const results = await SongRequestFunction.getSongRequestDetailsByLinkId(
+        linkId
+      );
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   getLinkDetails: async function (req, res, next) {
     try {
-      const id = req.query?.id;
+      const linkId = req.params?.linkId;
 
-      const results = await SongRequestFunction.getLinkDetails(id);
+      const results = await SongRequestFunction.getLinkDetails(linkId);
       res.json({ success: true, results });
     } catch (error) {
       res.status(500).json(error);

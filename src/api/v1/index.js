@@ -20,7 +20,11 @@ router.post("/sendsong", user.sendSong);
 router.post("/playsongfrominbox", user.authenticateJWT, user.playSongFromInbox);
 
 // song-request
-router.get("/getsongrequestlinkdetails", songRequest.getLinkDetails);
+router.get("/songrequest/linkdetails/:linkId", songRequest.getLinkDetails);
+router.get(
+  "/songrequest/detailsbylink/:linkId",
+  songRequest.getSongRequestDetailsByLinkId
+);
 
 router.post("/songrequest/mostview", songRequest.queryMostViewSongRequest);
 router.post("/songrequest/newest", songRequest.queryNewestSongRequest);

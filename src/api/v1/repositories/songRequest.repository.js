@@ -118,6 +118,17 @@ const methods = {
     };
   },
 
+  getSongRequestDetailsByLinkId: async function (linkId) {
+    const linkDetails = await this.getLinkDetails(linkId);
+    if (!linkDetails.exists) return { exists: false };
+
+    const requestData = await this.getSongRequestDetails(
+      linkDetails.details.requestId,
+      linkDetails.details.language
+    );
+
+    return requestData;
+  },
   getSongRequestDetails: async function (requestId, langTag) {
     const doc = await pathRef
       .SongRequestsLangCollection(langTag)
