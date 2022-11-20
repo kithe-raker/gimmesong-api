@@ -29,7 +29,7 @@ switch (process.env.NODE_ENV) {
     );
     break;
 
-  case "pre-production":
+  case "staging":
     firebase.initializeApp({
       databaseURL: _databaseUrl.development.default,
     });
