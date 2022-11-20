@@ -7,6 +7,7 @@ const {
 const LangTagHelper = require("../helpers/language_tag.helper");
 const { SongSchema } = require("../schemas/ytm.schema");
 const SongFunction = require("./song.repository");
+const UserFunction = require("./user.repository");
 const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
@@ -45,13 +46,42 @@ const methods = {
 
     const requestSnapshot = await query.get();
 
-    if (requestSnapshot.docs < 1) return { contents: [] };
+    // Get every song request's requester details
+    const promises = [];
+    var results = [];
+
+    var resultIndexs = {};
+
+    for (let index = 0; index < requestSnapshot.docs.length; index++) {
+      const doc = requestSnapshot.docs[index];
+      const receivedData = doc.data();
+
+      const requesterUid = receivedData.requester;
+      if (!requesterUid) return;
+
+      resultIndexs[doc.id] = index;
+
+      promises.push(
+        UserFunction.getUsername(requesterUid).then((data) => {
+          if (data.exists) {
+            receivedData.requester = {
+              uid: requesterUid,
+              username: data.username,
+            };
+            results[resultIndexs[doc.id]] = { id: doc.id, ...receivedData };
+          }
+        })
+      );
+    }
+
+    await Promise.all(promises);
+    results = results.filter((result) => result != null && result != undefined);
+
+    if (results.length < 1) return { contents: [] };
 
     return {
-      contents: requestSnapshot.docs.map((doc) =>
-        Object.assign({ id: doc.id }, doc.data())
-      ),
-      lastRequestId: requestSnapshot.docs[requestSnapshot.docs.length - 1].id,
+      contents: results,
+      lastRequestId: results[results.length - 1].id,
     };
   },
   queryUserSongRequest: async function (
