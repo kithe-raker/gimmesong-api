@@ -332,6 +332,7 @@ const methods = {
    *
    * @param {*} langTag
    * @param {*} requestId
+   * @param {*} senderUid
    * @param {{ artistInfo: {
    *                artist: Array<{browseId: string,pageType:string,text:string}>
    *            },
@@ -342,10 +343,17 @@ const methods = {
    *        }} song
    * @param {*} message
    */
-  addSongToSongRequest: async function (langTag, requestId, message, song) {
+  addSongToSongRequest: async function (
+    langTag,
+    requestId,
+    senderUid,
+    message,
+    song
+  ) {
     if (!song?.videoId) throw "No song's id provided";
     if (!langTag) throw "No language Tag provided";
     if (!requestId) throw "No request id provided";
+    if (!senderUid) throw "No sender's uid provided";
     if (!message) throw "No message provided";
 
     const itemRef = pathRef.SongRequestItemCollector(langTag, requestId).doc();
@@ -376,6 +384,7 @@ const methods = {
       }
 
       recentlyAdded.push({
+        sender: senderUid,
         itemId: itemRef.id,
         songId: song.videoId,
         thumbnail: song.thumbnails[0] ?? "",
@@ -391,6 +400,8 @@ const methods = {
       });
       trans.create(itemRef, {
         content: { message, songId: song.videoId },
+        sender: senderUid,
+        isAnonymous: true,
         sentAt: FieldValue.serverTimestamp(),
       });
     });

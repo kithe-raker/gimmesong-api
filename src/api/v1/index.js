@@ -42,7 +42,7 @@ router.post(
   user.authenticateJWT,
   songRequest.createSongRequest
 );
-router.post("/songrequest/addsong", songRequest.addSong);
+router.post("/songrequest/addsong", user.authenticateJWT, songRequest.addSong);
 router.post("/songrequest/incrementview", songRequest.incrementViews);
 
 // stats

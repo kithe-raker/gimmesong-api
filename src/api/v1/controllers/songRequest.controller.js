@@ -112,11 +112,17 @@ const methods = {
   },
   addSong: async function (req, res, next) {
     try {
+      const uid = _getUserId(req);
+      if (!uid) {
+        res.status(401).json({ details: "required authorization" });
+        return;
+      }
       const { langTag, requestId, message, song } = req.body;
 
       await SongRequestFunction.addSongToSongRequest(
         langTag,
         requestId,
+        uid,
         message,
         song
       );
