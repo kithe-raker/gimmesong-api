@@ -59,6 +59,14 @@ const methods = {
       const requesterUid = receivedData.requester;
       if (!requesterUid) return;
 
+      if (receivedData.isAnonymous) {
+        receivedData.requester = {
+          uid: requesterUid,
+        };
+        results[index] = { id: doc.id, ...receivedData };
+        continue;
+      }
+
       resultIndexs[doc.id] = index;
 
       promises.push(
@@ -128,13 +136,15 @@ const methods = {
       resultIndexs[requestId] = index;
 
       promises.push(
-        this.getSongRequestDetails(requestId, receivedData.language).then(
-          (data) => {
-            if (data.exists) {
-              results[resultIndexs[requestId]] = data.details;
-            }
+        this.getSongRequestDetails(
+          requestId,
+          receivedData.language,
+          false
+        ).then((data) => {
+          if (data.exists) {
+            results[resultIndexs[requestId]] = data.details;
           }
-        )
+        })
       );
     }
 
@@ -231,13 +241,32 @@ const methods = {
 
     return requestData;
   },
-  getSongRequestDetails: async function (requestId, langTag) {
+  getSongRequestDetails: async function (
+    requestId,
+    langTag,
+    includeRequesterName = true
+  ) {
     const doc = await pathRef
       .SongRequestsLangCollection(langTag)
       .doc(requestId)
       .get();
+    const receivedData = doc.data();
+
+    const requesterUid = receivedData.requester;
+    receivedData.requester = { uid: requesterUid };
+    if (
+      includeRequesterName &&
+      !receivedData.isAnonymous &&
+      doc.exists &&
+      requesterUid
+    ) {
+      const requesterDetails = await UserFunction.getUsername(requesterUid);
+      if (requesterDetails.exists)
+        receivedData.requester.username = requesterDetails.username;
+    }
+
     return {
-      details: Object.assign({ id: doc.id }, doc.data()),
+      details: { id: doc.id, ...receivedData },
       exists: doc.exists,
     };
   },
