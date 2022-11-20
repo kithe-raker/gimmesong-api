@@ -1,7 +1,7 @@
 const firebase = require("firebase-admin");
 const LangTagHelper = require("../api/v1/helpers/language_tag.helper");
 
-// realtime database's url
+// realtime database's url 
 const _databaseUrl = {
   production: {
     default:
