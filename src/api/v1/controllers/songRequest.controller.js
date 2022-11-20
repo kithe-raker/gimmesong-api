@@ -13,6 +13,20 @@ const methods = {
       res.status(500).json(error);
     }
   },
+  getSongRequestDetails: async function (req, res, next) {
+    try {
+      const langTag = req.params?.langTag,
+        id = req.params?.id;
+
+      const results = await SongRequestFunction.getSongRequestDetails(
+        id,
+        langTag
+      );
+      res.json({ success: true, results });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  },
   getLinkDetails: async function (req, res, next) {
     try {
       const linkId = req.params?.linkId;

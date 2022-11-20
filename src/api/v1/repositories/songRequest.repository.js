@@ -250,16 +250,17 @@ const methods = {
       .SongRequestsLangCollection(langTag)
       .doc(requestId)
       .get();
-    const receivedData = doc.data();
 
+    if (!doc.exists)
+      return {
+        exists: false,
+      };
+
+    const receivedData = doc.data();
     const requesterUid = receivedData.requester;
     receivedData.requester = { uid: requesterUid };
-    if (
-      includeRequesterName &&
-      !receivedData.isAnonymous &&
-      doc.exists &&
-      requesterUid
-    ) {
+
+    if (includeRequesterName && !receivedData.isAnonymous && requesterUid) {
       const requesterDetails = await UserFunction.getUsername(requesterUid);
       if (requesterDetails.exists)
         receivedData.requester.username = requesterDetails.username;

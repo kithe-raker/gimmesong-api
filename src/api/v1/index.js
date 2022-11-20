@@ -24,6 +24,10 @@ router.post("/playsongfrominbox", user.authenticateJWT, user.playSongFromInbox);
 // song-request
 router.get("/songrequest/linkdetails/:linkId", songRequest.getLinkDetails);
 router.get(
+  "/songrequest/details/:langTag/:id",
+  songRequest.getSongRequestDetails
+);
+router.get(
   "/songrequest/detailsbylink/:linkId",
   songRequest.getSongRequestDetailsByLinkId
 );
