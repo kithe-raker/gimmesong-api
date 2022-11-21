@@ -60,9 +60,7 @@ const methods = {
       if (!requesterUid) return;
 
       if (receivedData.isAnonymous) {
-        receivedData.requester = {
-          uid: requesterUid,
-        };
+        receivedData.requester = null;
         results[index] = { id: doc.id, ...receivedData };
         continue;
       }
@@ -258,7 +256,10 @@ const methods = {
 
     const receivedData = doc.data();
     const requesterUid = receivedData.requester;
-    receivedData.requester = { uid: requesterUid };
+
+    receivedData.requester = receivedData.isAnonymous
+      ? null
+      : { uid: requesterUid };
 
     if (includeRequesterName && !receivedData.isAnonymous && requesterUid) {
       const requesterDetails = await UserFunction.getUsername(requesterUid);
