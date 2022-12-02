@@ -10,6 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 const _whitelist = [
+  "192.168.1.3:3000",
   "http://localhost:3000",
   "https://gimmesong.link",
   "https://www.gimmesong.link",
