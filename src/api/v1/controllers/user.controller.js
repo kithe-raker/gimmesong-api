@@ -92,12 +92,12 @@ const methods = {
   },
   sendSong: async function (req, res, next) {
     try {
-      const { recipient, message, song } = req.body;
+      const { recipient, message, song, vinylStyle } = req.body;
       const { uid, exists } = await UserFunction.getUserIdByName(recipient);
 
       if (!exists) throw "Not found this username";
 
-      await UserFunction.sendSong(uid, message, song);
+      await UserFunction.sendSong(uid, message, song, vinylStyle);
 
       res.json({ success: true });
     } catch (error) {

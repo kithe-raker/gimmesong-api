@@ -136,8 +136,12 @@ const methods = {
    *            title: string,
    *            videoId: string
    *        }} song
+   * @param {{
+   *            background: string,
+   *            center: string,
+   *        }} vinylStyle
    */
-  sendSong: async function (recipientUid, message, song) {
+  sendSong: async function (recipientUid, message, song, vinylStyle) {
     if (!song?.videoId) throw "No song's id provided";
     if (!message) throw "No message provided";
     if (!recipientUid) throw "No recipient's uid provided";
@@ -163,6 +167,7 @@ const methods = {
 
     batch.create(pathRef.UserInboxCollection(recipientUid).doc(), {
       content: { message, songId: song.videoId },
+      vinyl_style: vinylStyle,
       played: false,
       receivedAt: FieldValue.serverTimestamp(),
       recipient: recipientUid,

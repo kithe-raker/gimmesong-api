@@ -343,6 +343,10 @@ const methods = {
    *            title: string,
    *            videoId: string
    *        }} song
+   * @param {{
+   *            background: string,
+   *            center: string,
+   *        }} vinylStyle
    * @param {*} message
    */
   addSongToSongRequest: async function (
@@ -350,7 +354,8 @@ const methods = {
     requestId,
     senderUid,
     message,
-    song
+    song,
+    vinylStyle
   ) {
     if (!song?.videoId) throw "No song's id provided";
     if (!langTag) throw "No language Tag provided";
@@ -390,6 +395,7 @@ const methods = {
         itemId: itemRef.id,
         songId: song.videoId,
         thumbnail: song.thumbnails[0] ?? "",
+        vinyl_style: vinylStyle,
       });
 
       trans.update(targetRequestRef, {
@@ -402,6 +408,7 @@ const methods = {
       });
       trans.create(itemRef, {
         content: { message, songId: song.videoId },
+        vinyl_style: vinylStyle,
         sender: senderUid,
         isAnonymous: true,
         sentAt: FieldValue.serverTimestamp(),
