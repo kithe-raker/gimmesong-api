@@ -8,6 +8,7 @@ const LangTagHelper = require("../helpers/language_tag.helper");
 const { SongSchema } = require("../schemas/ytm.schema");
 const SongFunction = require("./song.repository");
 const UserFunction = require("./user.repository");
+const VinylStyleFunction = require("./vinylStyle.repository");
 const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
@@ -374,6 +375,12 @@ const methods = {
     // if valid, update cached song details in db
     if (error) {
       throw error.message;
+    }
+
+    // validate if the provided vinyl style is exists
+    const vinylError = await VinylStyleFunction.validateVinylStyle(vinylStyle);
+    if (vinylError) {
+      throw vinylError;
     }
 
     Object.assign(song, {
