@@ -132,7 +132,7 @@ const pathRef = {
   VinylStyle: {
     Collection: fs.collection("VinylStyle"),
     BackgroundCollection: fs.collection("VinylStyle/background/styles"),
-    CenterCollection: fs.collection("VinylStyle/background/styles"),
+    CenterCollection: fs.collection("VinylStyle/center/styles"),
     /**
      *
      * @param {*} type right now we only have [background] and [center] vinyl component's type
