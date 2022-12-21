@@ -131,24 +131,23 @@ const pathRef = {
   // vinyl style relevant path
   VinylStyle: {
     Collection: fs.collection("VinylStyle"),
-    BackgroundCollection: fs.collection("VinylStyle/background/styles"),
-    CenterCollection: fs.collection("VinylStyle/center/styles"),
+    DiscCollection: fs.collection("VinylStyle/disc/styles"),
+    EmojiCollection: fs.collection("VinylStyle/emoji/styles"),
     /**
      *
-     * @param {*} type right now we only have [background] and [center] vinyl component's type
+     * @param {*} type right now we only have [disc] and [emoji] vinyl component's type
      * @param {*} id
      * @returns
      */
     StyleDocument: function (type, id) {
       if (!id) throw "no id provided";
       if (!type) throw "no type provided";
-      if (type != "background" && type != "center")
-        throw "provided type not exists";
+      if (type != "disc" && type != "emoji") throw "provided type not exists";
 
-      if (type == "background") {
-        return pathRef.VinylStyle.BackgroundCollection.doc(id);
+      if (type == "disc") {
+        return pathRef.VinylStyle.DiscCollection.doc(id);
       } else {
-        return pathRef.VinylStyle.CenterCollection.doc(id);
+        return pathRef.VinylStyle.EmojiCollection.doc(id);
       }
     },
   },

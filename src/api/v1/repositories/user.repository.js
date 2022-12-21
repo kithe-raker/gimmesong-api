@@ -138,8 +138,8 @@ const methods = {
    *            videoId: string
    *        }} song
    * @param {{
-   *            background: string,
-   *            center: string,
+   *            disc: string,
+   *            emoji: string,
    *        }} vinylStyle
    */
   sendSong: async function (recipientUid, message, song, vinylStyle) {

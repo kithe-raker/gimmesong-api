@@ -3,7 +3,7 @@ const { pathRef } = require("../../../config/firebase_config");
 const methods = {
   /**
    *
-   * @param {*} type right now we only have [background] and [center] vinyl component's type
+   * @param {*} type right now we only have [disc] and [emoji] vinyl component's type
    * @param {*} id
    * @returns
    */
@@ -14,26 +14,26 @@ const methods = {
   /**
    *
    * @param {{
-   *            background: string,
-   *            center: string,
+   *            disc: string,
+   *            emoji: string,
    *        }} vinylStyle
    * @returns message string if there are any error occurs
    */
   validateVinylStyle: async function (vinylStyle) {
-    if (!vinylStyle.background) return "No vinyl background style provided";
-    if (!vinylStyle.center) return "No vinyl center style provided";
+    if (!vinylStyle.disc) return "No vinyl disc style provided";
+    if (!vinylStyle.emoji) return "No vinyl emoji provided";
 
     // validate if the provided vinyl style is exists
-    const backgroundStyle = await this.getStyleDetails(
-      "background",
-      vinylStyle.background
+    const discStyle = await this.getStyleDetails(
+      "disc",
+      vinylStyle.disc
     );
-    if (!backgroundStyle.exists)
-      return "provided background vinyl's style doesn't exist";
+    if (!discStyle.exists)
+      return "provided disc vinyl's style doesn't exist";
 
-    const CenterStyle = await this.getStyleDetails("center", vinylStyle.center);
-    if (!CenterStyle.exists)
-      return "provided center vinyl's style doesn't exist";
+    const emojiStyle = await this.getStyleDetails("emoji", vinylStyle.emoji);
+    if (!emojiStyle.exists)
+      return "provided emoji vinyl's style doesn't exist";
 
     return;
   },
