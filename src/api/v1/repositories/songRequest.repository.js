@@ -8,6 +8,7 @@ const LangTagHelper = require("../helpers/language_tag.helper");
 const { SongSchema } = require("../schemas/ytm.schema");
 const SongFunction = require("./song.repository");
 const UserFunction = require("./user.repository");
+const VinylStyleFunction = require("./vinylStyle.repository");
 const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
@@ -343,6 +344,10 @@ const methods = {
    *            title: string,
    *            videoId: string
    *        }} song
+   * @param {{
+   *            disc: string,
+   *            emoji: string,
+   *        }} vinylStyle
    * @param {*} message
    */
   addSongToSongRequest: async function (
@@ -350,7 +355,8 @@ const methods = {
     requestId,
     senderUid,
     message,
-    song
+    song,
+    vinylStyle
   ) {
     if (!song?.videoId) throw "No song's id provided";
     if (!langTag) throw "No language Tag provided";
@@ -369,6 +375,12 @@ const methods = {
     // if valid, update cached song details in db
     if (error) {
       throw error.message;
+    }
+
+    // validate if the provided vinyl style is exists
+    const vinylError = await VinylStyleFunction.validateVinylStyle(vinylStyle);
+    if (vinylError) {
+      throw vinylError;
     }
 
     Object.assign(song, {
@@ -390,6 +402,7 @@ const methods = {
         itemId: itemRef.id,
         songId: song.videoId,
         thumbnail: song.thumbnails[0] ?? "",
+        vinyl_style: vinylStyle,
       });
 
       trans.update(targetRequestRef, {
@@ -402,6 +415,7 @@ const methods = {
       });
       trans.create(itemRef, {
         content: { message, songId: song.videoId },
+        vinyl_style: vinylStyle,
         sender: senderUid,
         isAnonymous: true,
         sentAt: FieldValue.serverTimestamp(),

@@ -1,6 +1,7 @@
 const { pathRef, fs, FieldValue } = require("../../../config/firebase_config");
 const { SongSchema } = require("../schemas/ytm.schema");
 const SongFunction = require("./song.repository");
+const VinylStyleFunction = require("./vinylStyle.repository");
 const { incrementSongSentStats } = require("./stats.repository");
 
 const methods = {
@@ -136,8 +137,12 @@ const methods = {
    *            title: string,
    *            videoId: string
    *        }} song
+   * @param {{
+   *            disc: string,
+   *            emoji: string,
+   *        }} vinylStyle
    */
-  sendSong: async function (recipientUid, message, song) {
+  sendSong: async function (recipientUid, message, song, vinylStyle) {
     if (!song?.videoId) throw "No song's id provided";
     if (!message) throw "No message provided";
     if (!recipientUid) throw "No recipient's uid provided";
@@ -152,6 +157,12 @@ const methods = {
       throw error.message;
     }
 
+    // validate if the provided vinyl style is exists
+    const vinylError = await VinylStyleFunction.validateVinylStyle(vinylStyle);
+    if (vinylError) {
+      throw vinylError;
+    }
+
     Object.assign(song, {
       given: FieldValue.increment(1),
       lastestGiven: FieldValue.serverTimestamp(),
@@ -163,6 +174,7 @@ const methods = {
 
     batch.create(pathRef.UserInboxCollection(recipientUid).doc(), {
       content: { message, songId: song.videoId },
+      vinyl_style: vinylStyle,
       played: false,
       receivedAt: FieldValue.serverTimestamp(),
       recipient: recipientUid,

@@ -1,7 +1,7 @@
 const firebase = require("firebase-admin");
 const LangTagHelper = require("../api/v1/helpers/language_tag.helper");
 
-// realtime database's url 
+// realtime database's url
 const _databaseUrl = {
   production: {
     default:
@@ -126,6 +126,30 @@ const pathRef = {
     const tag = LangTagHelper.validateTag(langTag);
 
     return pathRef.SongRequestTotalRef.child(tag);
+  },
+
+  // vinyl style relevant path
+  VinylStyle: {
+    Collection: fs.collection("VinylStyle"),
+    DiscCollection: fs.collection("VinylStyle/disc/styles"),
+    EmojiCollection: fs.collection("VinylStyle/emoji/styles"),
+    /**
+     *
+     * @param {*} type right now we only have [disc] and [emoji] vinyl component's type
+     * @param {*} id
+     * @returns
+     */
+    StyleDocument: function (type, id) {
+      if (!id) throw "no id provided";
+      if (!type) throw "no type provided";
+      if (type != "disc" && type != "emoji") throw "provided type not exists";
+
+      if (type == "disc") {
+        return pathRef.VinylStyle.DiscCollection.doc(id);
+      } else {
+        return pathRef.VinylStyle.EmojiCollection.doc(id);
+      }
+    },
   },
 };
 

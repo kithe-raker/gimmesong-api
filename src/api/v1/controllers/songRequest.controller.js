@@ -131,14 +131,15 @@ const methods = {
         res.status(401).json({ details: "required authorization" });
         return;
       }
-      const { langTag, requestId, message, song } = req.body;
+      const { langTag, requestId, message, song, vinylStyle } = req.body;
 
       await SongRequestFunction.addSongToSongRequest(
         langTag,
         requestId,
         uid,
         message,
-        song
+        song,
+        vinylStyle
       );
 
       res.json({ success: true });
